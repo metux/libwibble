@@ -1,0 +1,9 @@
+#!/bin/bash
+if test -e CMakeLists.txt; then
+	echo "configuring with cmake"
+	COMMAND=cmake otb-run "$@" SOURCEDIR
+else
+	echo "configuring with autotools"
+	test -e configure || ( echo no configure found; exit 1 )
+	COMMAND=SOURCEDIR/configure otb-run "$@"
+fi

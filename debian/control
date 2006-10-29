@@ -1,0 +1,26 @@
+Source: libwibble
+Section: libdevel
+Priority: optional
+Maintainer: libapt-front developers <libapt-front-devel@lists.alioth.debian.org>
+Uploaders: Peter Rockai <me@mornfall.net>, Enrico Zini <enrico@debian.org>
+Build-Depends: cdbs, debhelper (>> 4.1), dh-buildinfo, doxygen, libtool, libboost-dev, libgc-dev, libtut-dev, cmake
+Standards-Version: 3.7.2.0
+
+Package: libwibble-dev
+Section: libdevel
+Tag: devel::lang:c++, devel::library, implemented-in::c++, interface::commandline, role::devel-lib
+Architecture: any
+Depends: libboost-dev
+Recommends: pkg-config
+Description: Library of various useful C++ code
+ libwibble collects the foundation code that has been used over time
+ in various C++ projects by Peter Rockai and Enrico Zini, so that it can
+ be maintained properly and in a single place.
+ .
+ The library contains:
+  * an exception hierarchy;
+  * various useful mixin classes;
+  * shortcuts for set operations;
+  * a commandline parser that supports cvs-style subcommands;
+  * improved macros for tut unit testing;
+  * a non-intrusive polimorphic envelope.

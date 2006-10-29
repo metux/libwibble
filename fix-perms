@@ -1,0 +1,2 @@
+#!/bin/sh
+chmod +x debian/rules wibble/tests/libwibble-check

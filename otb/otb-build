@@ -1,0 +1,2 @@
+#!/bin/bash
+COMMAND=make otb-run "$@"
