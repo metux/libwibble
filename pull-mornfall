@@ -1,0 +1,3 @@
+#!/bin/sh
+
+darcs pull http://lorien.mornfall.net:8012/repos/libwibble

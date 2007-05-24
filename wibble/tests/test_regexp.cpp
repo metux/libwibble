@@ -7,8 +7,8 @@ using namespace wibble;
 
 namespace tut {
 
-struct regexp_shar {};
-TESTGRP( regexp );
+struct wibble_regexp_shar {};
+TESTGRP( wibble_regexp );
 
 // Test normal regular expression matching
 template<> template<>

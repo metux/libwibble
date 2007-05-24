@@ -1,3 +1,11 @@
+libwibble (0.1.10) unstable; urgency=low
+
+  * Added missing includes, applying tbm's patch.  Closes: #417368.
+  * Added a way to see if an option was set or not.
+  * Added wibble/text/wordwrap
+
+ -- Enrico Zini <enrico@debian.org>  Thu, 24 May 2007 11:11:48 +0200
+
 libwibble (0.1.9) unstable; urgency=low
 
   * Added sys/fs.h functions mkpath, mkFilePath, mkdirIfMissing

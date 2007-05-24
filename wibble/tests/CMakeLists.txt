@@ -11,6 +11,8 @@ TARGET_LINK_LIBRARIES( libwibble-test wibble pthread )
 ADD_EXECUTABLE( commandline-demo commandline-demo.cpp )
 TARGET_LINK_LIBRARIES( commandline-demo wibble pthread )
 
+#set_target_properties( libwibble-test PROPERTIES LINK_FLAGS ${GC_LINK_FLAGS} )
+
 ADD_CUSTOM_COMMAND(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/data-stamp
   COMMAND touch data-stamp )
