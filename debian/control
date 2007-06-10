@@ -1,7 +1,8 @@
 Source: libwibble
 Section: libdevel
 Priority: optional
-Maintainer: libapt-front developers <libapt-front-devel@lists.alioth.debian.org>
+Maintainer: Ubuntu Core Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+XSBC-Original-Maintainer: libapt-front developers <libapt-front-devel@lists.alioth.debian.org>
 Uploaders: Peter Rockai <me@mornfall.net>, Enrico Zini <enrico@debian.org>
 Build-Depends: cdbs, debhelper (>> 4.1), dh-buildinfo, doxygen, libtool, libboost-dev, libgc-dev, libtut-dev, cmake
 Standards-Version: 3.7.2.0

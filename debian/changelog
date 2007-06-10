@@ -1,3 +1,11 @@
+libwibble (0.1.10ubuntu1) gutsy; urgency=low
+
+  * Use bash to call extract_syms.sh, it's full of bashisms, and worse, was
+    pulled from libtool code.
+  * Munge Maintainer field as per spec.
+
+ -- Steve Kowalik <stevenk@ubuntu.com>  Sun, 10 Jun 2007 21:26:11 +1000
+
 libwibble (0.1.10) unstable; urgency=low
 
   * Added missing includes, applying tbm's patch.  Closes: #417368.
