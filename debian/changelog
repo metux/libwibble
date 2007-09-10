@@ -1,3 +1,9 @@
+libwibble (0.1.10ubuntu2) gutsy; urgency=low
+
+  * Fix build failures with g++-4.3.
+
+ -- Matthias Klose <doko@ubuntu.com>  Mon, 10 Sep 2007 14:16:15 +0200
+
 libwibble (0.1.10ubuntu1) gutsy; urgency=low
 
   * Use bash to call extract_syms.sh, it's full of bashisms, and worse, was

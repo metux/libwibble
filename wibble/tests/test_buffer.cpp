@@ -1,6 +1,8 @@
 #include <wibble/config.h>
 #include <wibble/sys/buffer.h>
 
+#include <cstring>
+
 using namespace std;
 using namespace wibble::sys;
 
