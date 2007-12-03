@@ -1,3 +1,18 @@
+libwibble (0.1.11ubuntu1) hardy; urgency=low
+
+  * Merge with Debian, remaining changes:
+   - Add debian/patches/gcc43.diff and use simple-patchsys.mk
+
+ -- Jonathan Riddell <jriddell@ubuntu.com>  Mon, 03 Dec 2007 12:28:13 +0000
+
+libwibble (0.1.11) unstable; urgency=low
+
+  * Added wibble::Splitter, to split strings using regexps
+  * Added wibble::str::* collection of little useful string operations
+  * Added missing include.  Closes: #441562.
+
+ -- Enrico Zini <enrico@debian.org>  Mon, 17 Sep 2007 16:37:10 +0200
+
 libwibble (0.1.10ubuntu2) gutsy; urgency=low
 
   * Fix build failures with g++-4.3.

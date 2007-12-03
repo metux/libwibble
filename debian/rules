@@ -3,6 +3,7 @@
 include /usr/share/cdbs/1/rules/debhelper.mk
 # comment out autotools and uncomment cmake to use cmake
 #include /usr/share/cdbs/1/class/autotools.mk
+include /usr/share/cdbs/1/rules/simple-patchsys.mk
 include debian/cmake.mk
 
 DEB_MAKE_CHECK_TARGET := check

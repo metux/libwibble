@@ -135,7 +135,7 @@ void Help::outputHelp(std::ostream& out, const Engine& p)
 	{
 		// Dig informations from p
 		const std::vector<Engine*>& commands = p.commands();
-	
+
 		// Compute the maximum length of alias names
 		size_t maxAliasSize = 0;
 		for (vector<Engine*>::const_iterator i = commands.begin();
@@ -174,7 +174,8 @@ void Help::outputHelp(std::ostream& out, const Engine& p)
 			writer.outlist(" " + (*i)->primaryAlias, maxAliasSize + 3, (*i)->description + "." + aliases);
 		}
 	} else {
-		if (p.primaryAlias.empty())
+ 		// FIXME the || m_app == thing is a workaround...
+		if (p.primaryAlias.empty() || m_app == p.primaryAlias)
 			out << "Usage: " << m_app << " [options] " << p.usage << endl;
 		else
 			out << "Usage: " << m_app << " [options] " << p.primaryAlias << " [options] " << p.usage << endl;
@@ -233,7 +234,7 @@ void Manpage::outputParagraph(std::ostream& out, const std::string& str)
 				break;
 			default:
 				out << str[i];
-		}		
+		}
 	out << '\n';
 }
 
