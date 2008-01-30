@@ -1,4 +1,7 @@
-SUBDIRS = wibble
+SUBDIRS = wibble doc
 
-enrico-publish: clean
-	rsync -Cavz -P -e ssh ./ people.debian.org:public_html/wibble
+m4dir = $(datadir)/aclocal
+m4_DATA = wibble/libwibble.m4
+
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = wibble/libwibble.pc

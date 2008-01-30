@@ -1,17 +1,16 @@
 Source: libwibble
 Section: libdevel
 Priority: optional
-Maintainer: Ubuntu Core developers <ubuntu-devel-discuss@lists.ubuntu.com>
-XSBC-Original-Maintainer: libapt-front developers <libapt-front-devel@lists.alioth.debian.org>
-Uploaders: Peter Rockai <me@mornfall.net>, Enrico Zini <enrico@debian.org>
-Build-Depends: cdbs, debhelper (>> 4.1), dh-buildinfo, doxygen, libtool, libboost-dev, libgc-dev, libtut-dev, cmake
-Standards-Version: 3.7.2.0
+Maintainer: libapt-front developers <libapt-front-devel@lists.alioth.debian.org>
+Uploaders: Petr Rockai <mornfall@debian.org>, Enrico Zini <enrico@debian.org>
+Build-Depends: cdbs, debhelper (>> 4.1), dh-buildinfo, doxygen, cmake
+Standards-Version: 3.7.3
+X-Vcs-Darcs: http://people.debian.org/~enrico/wibble/standalone
 
 Package: libwibble-dev
 Section: libdevel
 Tag: devel::lang:c++, devel::library, implemented-in::c++, interface::commandline, role::devel-lib
 Architecture: any
-Depends: libboost-dev
 Recommends: pkg-config
 Description: Library of various useful C++ code
  libwibble collects the foundation code that has been used over time
@@ -24,4 +23,4 @@ Description: Library of various useful C++ code
   * shortcuts for set operations;
   * a commandline parser that supports cvs-style subcommands;
   * improved macros for tut unit testing;
-  * a non-intrusive polimorphic envelope.
+  * a non-intrusive polymorphic envelope.

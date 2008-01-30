@@ -1,4 +1,0 @@
-#!/bin/sh
-
-#darcs pull http://lorien.mornfall.net:8012/repos/libwibble
-darcs pull http://repos.mornfall.net/libwibble

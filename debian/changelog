@@ -1,9 +1,27 @@
-libwibble (0.1.11ubuntu1) hardy; urgency=low
+libwibble (0.1.13) unstable; urgency=low
 
-  * Merge with Debian, remaining changes:
-   - Add debian/patches/gcc43.diff and use simple-patchsys.mk
+  * Builds with GCC 4.3.  Closes: #455630
+  * Build and install Doxygen documentation.
 
- -- Jonathan Riddell <jriddell@ubuntu.com>  Mon, 03 Dec 2007 12:28:13 +0000
+ -- Enrico Zini <enrico@debian.org>  Wed, 30 Jan 2008 20:58:09 +0100
+
+libwibble (0.1.12) unstable; urgency=low
+
+  [ Enrico Zini ]
+  * Split the repository in embeddable and standalone
+  * Allow commandline-using programs to output a manpage just with --manpage
+    and without needing --manpage=/dev/null
+  * Added X-Vcs-Darcs: header
+  * Added missing include.  Closes: #455630.
+
+  [ Petr Rockai ]
+  * Add a new header, wibble/sfinae.h to ease execution of SFINAE
+    pattern: substitution failure is not an error (consult google),
+  * change internals of Amorph to not require boost, consequently:
+  * remove boost build dependency.
+  * Completely new testing framework is now part of wibble.
+
+ -- Petr Rockai <mornfall@debian.org>  Wed, 23 Jan 2008 00:12:19 +0100
 
 libwibble (0.1.11) unstable; urgency=low
 
@@ -12,20 +30,6 @@ libwibble (0.1.11) unstable; urgency=low
   * Added missing include.  Closes: #441562.
 
  -- Enrico Zini <enrico@debian.org>  Mon, 17 Sep 2007 16:37:10 +0200
-
-libwibble (0.1.10ubuntu2) gutsy; urgency=low
-
-  * Fix build failures with g++-4.3.
-
- -- Matthias Klose <doko@ubuntu.com>  Mon, 10 Sep 2007 14:16:15 +0200
-
-libwibble (0.1.10ubuntu1) gutsy; urgency=low
-
-  * Use bash to call extract_syms.sh, it's full of bashisms, and worse, was
-    pulled from libtool code.
-  * Munge Maintainer field as per spec.
-
- -- Steve Kowalik <stevenk@ubuntu.com>  Sun, 10 Jun 2007 21:26:11 +1000
 
 libwibble (0.1.10) unstable; urgency=low
 

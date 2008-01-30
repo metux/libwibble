@@ -5,7 +5,7 @@
 /*
  * Various string functions
  *
- * Copyright (C) 2007  Enrico Zini <enrico@debian.org>
+ * Copyright (C) 2007,2008  Enrico Zini <enrico@debian.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -48,6 +48,19 @@ inline std::string basename(const std::string& pathname)
 		return pathname.substr(pos+1);
 }
 
+/// Given a pathname, return the directory name without the file name
+inline std::string dirname(const std::string& pathname)
+{
+	size_t pos = pathname.rfind("/");
+	if (pos == std::string::npos)
+		return std::string();
+	else if (pos == 0)
+		// Handle the case of '/foo'
+		return std::string("/");
+	else
+		return pathname.substr(0, pos);
+}
+
 /// Check if a string starts with the given substring
 inline bool startsWith(const std::string& str, const std::string& part)
 {
@@ -64,6 +77,7 @@ inline bool endsWith(const std::string& str, const std::string& part)
 	return str.substr(str.size() - part.size()) == part;
 }
 
+#if ! __GNUC__ || __GNUC__ >= 4
 /**
  * Return the substring of 'str' without all leading and trailing characters
  * for which 'classifier' returns true.
@@ -89,8 +103,25 @@ inline std::string trim(const std::string& str, const FUN& classifier)
  */
 inline std::string trim(const std::string& str)
 {
-	return trim(str, isspace);
+    return trim(str, ::isspace);
 }
+#else
+/// Workaround version for older gcc
+inline std::string trim(const std::string& str)
+{
+	if (str.empty())
+		return str;
+
+	size_t beg = 0;
+	size_t end = str.size() - 1;
+	while (beg < end && ::isspace(str[beg]))
+		++beg;
+	while (end >= beg && ::isspace(str[end]))
+		--end;
+
+	return str.substr(beg, end-beg+1);
+}
+#endif
 
 /// Convert a string to uppercase
 inline std::string toupper(const std::string& str)
@@ -111,6 +142,32 @@ inline std::string tolower(const std::string& str)
 		res += ::tolower(*i);
 	return res;
 }
+
+/// Join two paths, adding slashes when appropriate
+inline std::string joinpath(const std::string& path1, const std::string& path2)
+{
+	if (path1.empty())
+		return path2;
+	if (path2.empty())
+		return path1;
+
+	if (path1[path1.size() - 1] == '/')
+		if (path2[0] == '/')
+			return path1 + path2.substr(1);
+		else
+			return path1 + path2;
+	else
+		if (path2[0] == '/')
+			return path1 + path2;
+		else
+			return path1 + '/' + path2;
+}
+
+/// Urlencode a string
+std::string urlencode(const std::string& str);
+
+/// Decode an urlencoded string
+std::string urldecode(const std::string& str);
 
 }
 }
