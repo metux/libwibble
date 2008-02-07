@@ -1,5 +1,5 @@
 include( FindDoxygen )
-set( VERSION "0.1.13" )
+set( VERSION "0.1.14" )
 option( HAVE_TUT ON )
 add_subdirectory( wibble )
 add_subdirectory( doc )

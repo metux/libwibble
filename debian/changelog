@@ -1,3 +1,10 @@
+libwibble (0.1.14) unstable; urgency=low
+
+  * Fixed a C++ error that mysteriously only shows up on ARM.
+  * Fixed XS-Vcs-Darcs field
+
+ -- Enrico Zini <enrico@debian.org>  Thu, 07 Feb 2008 10:19:29 +0000
+
 libwibble (0.1.13) unstable; urgency=low
 
   * Builds with GCC 4.3.  Closes: #455630

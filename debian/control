@@ -5,11 +5,10 @@ Maintainer: libapt-front developers <libapt-front-devel@lists.alioth.debian.org>
 Uploaders: Petr Rockai <mornfall@debian.org>, Enrico Zini <enrico@debian.org>
 Build-Depends: cdbs, debhelper (>> 4.1), dh-buildinfo, doxygen, cmake
 Standards-Version: 3.7.3
-X-Vcs-Darcs: http://people.debian.org/~enrico/wibble/standalone
+XS-Vcs-Darcs: http://people.debian.org/~enrico/wibble/standalone
 
 Package: libwibble-dev
 Section: libdevel
-Tag: devel::lang:c++, devel::library, implemented-in::c++, interface::commandline, role::devel-lib
 Architecture: any
 Recommends: pkg-config
 Description: Library of various useful C++ code
