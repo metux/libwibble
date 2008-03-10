@@ -5,7 +5,7 @@ Maintainer: libapt-front developers <libapt-front-devel@lists.alioth.debian.org>
 Uploaders: Petr Rockai <mornfall@debian.org>, Enrico Zini <enrico@debian.org>
 Build-Depends: cdbs, debhelper (>> 4.1), dh-buildinfo, doxygen, cmake
 Standards-Version: 3.7.3
-XS-Vcs-Darcs: http://people.debian.org/~enrico/wibble/standalone
+Vcs-Darcs: http://people.debian.org/~enrico/wibble/standalone
 
 Package: libwibble-dev
 Section: libdevel

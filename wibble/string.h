@@ -37,6 +37,8 @@ inline std::string fmt(const T& val)
     str << val;
     return str.str();
 }
+template<> inline std::string fmt<std::string>(const std::string& val) { return val; }
+template<> inline std::string fmt<char*>(char * const & val) { return val; }
 
 /// Given a pathname, return the file name without its path
 inline std::string basename(const std::string& pathname)
@@ -60,6 +62,13 @@ inline std::string dirname(const std::string& pathname)
 	else
 		return pathname.substr(0, pos);
 }
+
+/**
+ * Normalise a pathname.
+ *
+ * For example, A//B, A/./B and A/foo/../B all become A/B.
+ */
+std::string normpath(const std::string& pathname);
 
 /// Check if a string starts with the given substring
 inline bool startsWith(const std::string& str, const std::string& part)
@@ -143,6 +152,15 @@ inline std::string tolower(const std::string& str)
 	return res;
 }
 
+/// Return the same string, with the first character uppercased
+inline std::string ucfirst(const std::string& str)
+{
+	if (str.empty()) return str;
+	std::string res;
+	res += ::toupper(str[0]);
+	return res + tolower(str.substr(1));
+}
+
 /// Join two paths, adding slashes when appropriate
 inline std::string joinpath(const std::string& path1, const std::string& path2)
 {
@@ -168,6 +186,168 @@ std::string urlencode(const std::string& str);
 
 /// Decode an urlencoded string
 std::string urldecode(const std::string& str);
+
+/// Encode a string in Base64
+std::string encodeBase64(const std::string& str);
+
+/// Decode a string encoded in Base64
+std::string decodeBase64(const std::string& str);
+
+/**
+ * Split a string where a given substring is found
+ *
+ * This does a similar work to the split functions of perl, python and ruby.
+ *
+ * Example code:
+ * \code
+ *   str::Split splitter("/");
+ *   vector<string> split;
+ *   std::copy(splitter.begin(myString), splitter.end(), back_inserter(split));
+ * \endcode
+ */
+class Split
+{
+	std::string sep;
+	std::string str;
+
+public:
+	// TODO: add iterator_traits
+	class const_iterator
+	{
+		const std::string& sep;
+		const std::string& str;
+		std::string cur;
+		size_t pos;
+
+	public:
+		const_iterator(const std::string& sep, const std::string& str) : sep(sep), str(str), pos(0)
+		{
+			++*this;
+		}
+		const_iterator(const std::string& sep, const std::string& str, bool) : sep(sep), str(str), pos(std::string::npos) {}
+
+		const_iterator& operator++()
+		{
+			if (pos == str.size())
+				pos = std::string::npos;
+			else
+			{
+				size_t end;
+				if (sep.empty())
+					if (pos + 1 == str.size())
+						end = std::string::npos;
+					else
+						end = pos + 1;
+				else
+					end = str.find(sep, pos);
+				if (end == std::string::npos)
+				{
+					cur = str.substr(pos);
+					pos = str.size();
+				}
+				else
+				{
+					cur = str.substr(pos, end-pos);
+					pos = end + sep.size();
+				}
+			}
+			return *this;
+		}
+
+		std::string remainder() const
+		{
+			if (pos == std::string::npos)
+				return std::string();
+			else
+				return str.substr(pos);
+		}
+
+		const std::string& operator*() const
+		{
+			return cur;
+		}
+		const std::string* operator->() const
+		{
+			return &cur;
+		}
+		bool operator==(const const_iterator& ti) const
+		{
+			// Comparing iterators on different strings is not supported for
+			// performance reasons
+			return pos == ti.pos;
+		}
+		bool operator!=(const const_iterator& ti) const
+		{
+			// Comparing iterators on different strings is not supported for
+			// performance reasons
+			return pos != ti.pos;
+		}
+	};
+
+	/**
+	 * Create a splitter that uses the given regular expression to find tokens.
+	 */
+	Split(const std::string& sep, const std::string& str) : sep(sep), str(str) {}
+
+	/**
+	 * Split the string and iterate the resulting tokens
+	 */
+	const_iterator begin() const { return const_iterator(sep, str); }
+	const_iterator end() const { return const_iterator(sep, str, false); }
+};
+
+/**
+ * Parse a record of Yaml-style field: value couples.
+ *
+ * Parsing stops either at end of record (one empty line) or at end of file.
+ *
+ * The value is deindented properly.
+ *
+ * Example code:
+ * \code
+ *	utils::YamlStream stream;
+ *	map<string, string> record;
+ *	std::copy(stream.begin(inputstream), stream.end(), inserter(record));
+ * \endcode
+ */
+class YamlStream
+{
+public:
+	// TODO: add iterator_traits
+	class const_iterator
+	{
+		std::istream* in;
+		std::pair<std::string, std::string> value;
+		std::string line;
+
+	public:
+		const_iterator(std::istream& in);
+		const_iterator() : in(0) {}
+
+		const_iterator& operator++();
+
+		const std::pair<std::string, std::string>& operator*() const
+		{
+			return value;
+		}
+		const std::pair<std::string, std::string>* operator->() const
+		{
+			return &value;
+		}
+		bool operator==(const const_iterator& ti) const
+		{
+			return in == ti.in;
+		}
+		bool operator!=(const const_iterator& ti) const
+		{
+			return in != ti.in;
+		}
+	};
+
+	const_iterator begin(std::istream& in) { return const_iterator(in); }
+	const_iterator end() { return const_iterator(); }
+};
+
 
 }
 }

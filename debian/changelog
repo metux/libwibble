@@ -1,3 +1,13 @@
+libwibble (0.1.15) unstable; urgency=low
+
+  * Yaml parsing
+  * Base64 codec
+  * Path manipulations including abspath
+  * Compiles with -Wall -Werror
+  * Implemented repeatable options that accumulate values in a vector
+
+ -- Enrico Zini <enrico@debian.org>  Mon, 10 Mar 2008 23:03:19 +0100
+
 libwibble (0.1.14) unstable; urgency=low
 
   * Fixed a C++ error that mysteriously only shows up on ARM.

@@ -70,6 +70,14 @@ struct TestString {
         assert_eq(str::toupper("cIAO"), "CIAO");
     }
 
+    Test ucfirst()
+    {
+        assert_eq(str::ucfirst("ciao"), "Ciao");
+        assert_eq(str::ucfirst("CIAO"), "Ciao");
+        assert_eq(str::ucfirst("Ciao"), "Ciao");
+        assert_eq(str::ucfirst("cIAO"), "Ciao");
+    }
+
 // Check startsWith
     Test startsWith()
     {
@@ -114,6 +122,205 @@ struct TestString {
         assert_eq(str::urldecode(str::urlencode("àá☣☢☠!@#$%^&*(\")/A")), "àá☣☢☠!@#$%^&*(\")/A");
         assert_eq(str::urldecode(str::urlencode("http://zz:ss@a.b:31/c?d=e&f=g")), "http://zz:ss@a.b:31/c?d=e&f=g");
     }
+
+	Test split1()
+	{
+		string val = "";
+		str::Split split("/", val);
+		str::Split::const_iterator i = split.begin();
+		assert(i == split.end());
+	}
+
+	Test split2()
+	{
+		string val = "foo";
+		str::Split split("/", val);
+		str::Split::const_iterator i = split.begin();
+		assert(i != split.end());
+		assert_eq(*i, "foo");
+		assert_eq(i.remainder(), "");
+		++i;
+		assert(i == split.end());
+	}
+
+	Test split3()
+	{
+		string val = "foo";
+		str::Split split("", val);
+		str::Split::const_iterator i = split.begin();
+		assert(i != split.end());
+		assert_eq(*i, "f");
+		assert_eq(i.remainder(), "oo");
+		++i;
+		assert_eq(*i, "o");
+		assert_eq(i.remainder(), "o");
+		++i;
+		assert_eq(*i, "o");
+		assert_eq(i.remainder(), "");
+		++i;
+		assert(i == split.end());
+	}
+
+	Test split4()
+	{
+		string val = "/a//foo/";
+		str::Split split("/", val);
+		str::Split::const_iterator i = split.begin();
+		assert(i != split.end());
+		assert_eq(*i, "");
+		assert_eq(i.remainder(), "a//foo/");
+		++i;
+		assert(i != split.end());
+		assert_eq(*i, "a");
+		assert_eq(i.remainder(), "/foo/");
+		++i;
+		assert(i != split.end());
+		assert_eq(*i, "");
+		assert_eq(i.remainder(), "foo/");
+		++i;
+		assert(i != split.end());
+		assert_eq(*i, "foo");
+		assert_eq(i.remainder(), "");
+		++i;
+		assert(i == split.end());
+	}
+
+	Test normpath()
+	{
+		assert_eq(str::normpath(""), ".");
+		assert_eq(str::normpath("/"), "/");
+		assert_eq(str::normpath("foo"), "foo");
+		assert_eq(str::normpath("foo/"), "foo");
+		assert_eq(str::normpath("/foo"), "/foo");
+		assert_eq(str::normpath("foo/bar"), "foo/bar");
+		assert_eq(str::normpath("foo/./bar"), "foo/bar");
+		assert_eq(str::normpath("././././foo/./././bar/././././"), "foo/bar");
+		assert_eq(str::normpath("/../../../../../foo"), "/foo");
+		assert_eq(str::normpath("foo/../foo/../foo/../foo/../"), ".");
+		assert_eq(str::normpath("foo//bar"), "foo/bar");
+		assert_eq(str::normpath("foo/./bar"), "foo/bar");
+		assert_eq(str::normpath("foo/foo/../bar"), "foo/bar");
+	}
+
+	Test base64()
+	{
+		using namespace str;
+		assert_eq(encodeBase64(""), "");
+		assert_eq(encodeBase64("c"), "Yw==");
+		assert_eq(encodeBase64("ci"), "Y2k=");
+		assert_eq(encodeBase64("cia"), "Y2lh");
+		assert_eq(encodeBase64("ciao"), "Y2lhbw==");
+		assert_eq(encodeBase64("ciao "), "Y2lhbyA=");
+		assert_eq(encodeBase64("ciao c"), "Y2lhbyBj");
+		assert_eq(encodeBase64("ciao ci"), "Y2lhbyBjaQ==");
+		assert_eq(encodeBase64("ciao cia"), "Y2lhbyBjaWE=");
+		assert_eq(encodeBase64("ciao ciao"), "Y2lhbyBjaWFv");
+
+		assert_eq(decodeBase64(encodeBase64("")), "");
+		assert_eq(decodeBase64(encodeBase64("c")), "c");
+		assert_eq(decodeBase64(encodeBase64("ci")), "ci");
+		assert_eq(decodeBase64(encodeBase64("cia")), "cia");
+		assert_eq(decodeBase64(encodeBase64("ciao")), "ciao");
+		assert_eq(decodeBase64(encodeBase64("ciao ")), "ciao ");
+		assert_eq(decodeBase64(encodeBase64("ciao c")), "ciao c");
+		assert_eq(decodeBase64(encodeBase64("ciao ci")), "ciao ci");
+		assert_eq(decodeBase64(encodeBase64("ciao cia")), "ciao cia");
+		assert_eq(decodeBase64(encodeBase64("ciao ciao")), "ciao ciao");
+	}
+
+	Test yaml()
+	{
+		string data = 
+			"Name: value\n"
+			"Multiline: value1\n"
+			"  value2\n"
+			"   value3\n"
+			"Multifield:\n"
+			"  Field1: val1\n"
+			"  Field2: val2\n"
+			"   continue val2\n"
+			"\n"
+			"Name: second record\n";
+		stringstream input(data, ios_base::in);
+		str::YamlStream yamlStream;
+		str::YamlStream::const_iterator i = yamlStream.begin(input);
+		assert(i != yamlStream.end());
+		assert_eq(i->first, "Name");
+		assert_eq(i->second, "value");
+
+		++i;
+		assert(i != yamlStream.end());
+		assert_eq(i->first, "Multiline");
+		assert_eq(i->second,
+			"value1\n"
+			"value2\n"
+			" value3\n");
+
+		++i;
+		assert(i != yamlStream.end());
+		assert_eq(i->first, "Multifield");
+		assert_eq(i->second,
+			"Field1: val1\n"
+			"Field2: val2\n"
+			" continue val2\n");
+
+		++i;
+		assert(i == yamlStream.end());
+
+		i = yamlStream.begin(input);
+		assert(i != yamlStream.end());
+		assert_eq(i->first, "Name");
+		assert_eq(i->second, "second record");
+
+		++i;
+		assert(i == yamlStream.end());
+
+		i = yamlStream.begin(input);
+		assert(i == yamlStream.end());
+	}
+
+	Test yamlComments()
+	{
+		string data = 
+			"# comment\n"
+			"Name: value # comment\n"
+			"# comment\n"
+			"Multiline: value1          #   comment \n"
+			"  value2 # a\n"
+			"   value3#b\n"
+			"\n"
+			"# comment\n"
+			"\n"
+			"Name: second record\n";
+		stringstream input(data, ios_base::in);
+		str::YamlStream yamlStream;
+		str::YamlStream::const_iterator i = yamlStream.begin(input);
+		assert(i != yamlStream.end());
+		assert_eq(i->first, "Name");
+		assert_eq(i->second, "value");
+
+		++i;
+		assert(i != yamlStream.end());
+		assert_eq(i->first, "Multiline");
+		assert_eq(i->second,
+			"value1\n"
+			"value2 # a\n"
+			" value3#b\n");
+
+		++i;
+		assert(i == yamlStream.end());
+
+		i = yamlStream.begin(input);
+		assert(i != yamlStream.end());
+		assert_eq(i->first, "Name");
+		assert_eq(i->second, "second record");
+
+		++i;
+		assert(i == yamlStream.end());
+
+		i = yamlStream.begin(input);
+		assert(i == yamlStream.end());
+	}
 };
 
 }
