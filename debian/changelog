@@ -1,3 +1,9 @@
+libwibble (0.1.16) unstable; urgency=low
+
+  * Added missing commandline::ExistingFile::toString
+
+ -- Enrico Zini <enrico@debian.org>  Fri, 28 Mar 2008 10:16:57 +0800
+
 libwibble (0.1.15) unstable; urgency=low
 
   * Yaml parsing
