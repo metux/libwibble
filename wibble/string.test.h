@@ -3,6 +3,7 @@
 
 #include <wibble/test.h>
 #include <wibble/string.h>
+#include <wibble/list.h>
 
 namespace {
 
@@ -16,6 +17,27 @@ struct TestString {
         assert_eq(str::fmt(5), "5");
         assert_eq(str::fmt(5.123), "5.123");
         assert_eq(str::fmt("ciao"), "ciao");
+    }
+
+    Test fmtSet()
+    {
+        std::set< int > a;
+        assert_eq(str::fmt(a), "{}");
+        a.insert( a.begin(), 2 );
+        assert_eq(str::fmt(a), "{ 2 }");
+        a.insert( a.begin(), 5 );
+        assert_eq(str::fmt(a), "{ 2, 5 }");
+        a.insert( a.begin(), 1 );
+        assert_eq(str::fmt(a), "{ 1, 2, 5 }");
+    }
+
+    Test fmtList()
+    {
+        assert_eq( str::fmt( list::Empty< int >() ), "[]" );
+        assert_eq( str::fmt( list::singular( 0 ) ), "[ 0 ]" );
+        assert_eq( str::fmt( list::append(
+                                 list::singular( 0 ),
+                                 list::singular( 2 ) ) ), "[ 0, 2 ]" );
     }
 
     Test basename()
@@ -183,6 +205,14 @@ struct TestString {
 		assert_eq(i.remainder(), "");
 		++i;
 		assert(i == split.end());
+	}
+
+	Test join()
+	{
+		string val = "/a//foo/";
+		str::Split split("/", val);
+		string res = str::join(split.begin(), split.end(), ":");
+		assert_eq(res, ":a::foo");
 	}
 
 	Test normpath()

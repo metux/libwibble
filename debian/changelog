@@ -1,3 +1,23 @@
+libwibble (0.1.17) unstable; urgency=low
+
+  [ Enrico Zini ]
+  * Fixes for OS X,
+  * simplistic mmap support,
+  * PosixBuf,
+  * allow to use Splitter with STL algorithms,
+  * bugfixes.
+
+  [ Petr Rockai ]
+  * Get back setValue for options in commandline parser,
+  * added TPair to wibble/sfinae.h,
+  * include a generic list utility library,
+  * implement simple formatting (str::fmt) of sets and lists,
+  * a new assert implementation,
+  * fix a bug in build system that caused FTBFS with cmake 2.6
+    (closes: #482246).
+
+ -- Petr Rockai <mornfall@debian.org>  Mon, 26 May 2008 23:24:47 +0200
+
 libwibble (0.1.16) unstable; urgency=low
 
   * Added missing commandline::ExistingFile::toString

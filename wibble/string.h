@@ -22,23 +22,67 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
  */
 
+#include <wibble/operators.h>
+#include <wibble/sfinae.h>
+
 #include <string>
+#include <set>
 #include <sstream>
 #include <cctype>
 
 namespace wibble {
 namespace str {
 
+using namespace wibble::operators;
+
+// Formatting lists -- actually, we need to move list handling into wibble,
+// really.
+template< typename X >
+inline typename TPair< std::ostream, typename X::Type >::First &operator<<(
+    std::ostream &o, X list )
+{
+    if ( list.empty() )
+        return o << "[]";
+
+    o << "[ ";
+    while( !list.empty() ) {
+        o << fmt( list.head() );
+        if ( !list.tail().empty() )
+            o << ", ";
+        list = list.tail();
+    }
+    return o << " ]";
+}
+
 /// Format any value into a string using a std::stringstream
-template<typename T>
+template< typename T >
 inline std::string fmt(const T& val)
 {
     std::stringstream str;
     str << val;
     return str.str();
 }
-template<> inline std::string fmt<std::string>(const std::string& val) { return val; }
+
+template<> inline std::string fmt<std::string>(const std::string& val) {
+    return val;
+}
 template<> inline std::string fmt<char*>(char * const & val) { return val; }
+
+// formatting sets using { ... } notation
+template< typename X >
+inline std::string fmt(const std::set< X >& val) {
+    if ( val.empty() )
+        return "{}";
+
+    std::string s;
+    for ( typename std::set< X >::iterator i = val.begin();
+          i != val.end(); ++i ) {
+        s += fmt( *i );
+        if ( i != val.end() && i + 1 != val.end() )
+            s += ", ";
+    }
+    return "{ " + s + " }";
+}
 
 /// Given a pathname, return the file name without its path
 inline std::string basename(const std::string& pathname)
@@ -295,6 +339,22 @@ public:
 	const_iterator begin() const { return const_iterator(sep, str); }
 	const_iterator end() const { return const_iterator(sep, str, false); }
 };
+
+template<typename ITER>
+std::string join(const ITER& begin, const ITER& end, const std::string& sep = ", ")
+{
+	std::stringstream res;
+	bool first = true;
+	for (ITER i = begin; i != end; ++i)
+	{
+		if (first)
+			first = false;
+		else
+			res << sep;
+		res << *i;
+	}
+	return res.str();
+}
 
 /**
  * Parse a record of Yaml-style field: value couples.
