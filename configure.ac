@@ -1,10 +1,20 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(libwibble, [0.1.7], [libapt-front-devel@lists.alioth.debian.org])
+AC_INIT(libwibble, [0.1.18], [libapt-front-devel@lists.alioth.debian.org])
 AC_CONFIG_SRCDIR([configure.ac])
 dnl AC_CONFIG_AUX_DIR(admin)
-AM_INIT_AUTOMAKE([foreign subdir-objects])
-AC_CONFIG_HEADERS(wibble/config.h)
-AC_CONFIG_HEADERS(wibble/shared.h)
+AM_INIT_AUTOMAKE([foreign subdir-objects nostdinc])
+
+AC_ARG_ENABLE(docs,
+		[  --enable-docs    Turn on generation of documentation],
+		[case "${enableval}" in
+			yes) docs=true ;;
+			no)  docs=false ;;
+			*) AC_MSG_ERROR(bad value ${enableval} for --enable-docs) ;;
+		esac],[docs=true])
+AM_CONDITIONAL(DO_DOCS, test x$docs = xtrue)
+
+dnl Doen not work when embedded
+dnl AC_CONFIG_HEADERS(wibble/config.h)
 
 dnl To use subdirs
 AC_PROG_MAKE_SET
@@ -29,12 +39,15 @@ AM_PROG_LIBTOOL
 
 CXXFLAGS="-Wall -W $CXXFLAGS"
 
+AM_CONDITIONAL([WIBBLE_STANDALONE], [true])
+
 AC_CONFIG_FILES([
 Makefile
 wibble/Makefile
 wibble/tests/Makefile
 wibble/libwibble.pc
-wibble/libwibble-gc.pc
+doc/Makefile
+doc/wibble.dox
 ])
 AC_OUTPUT
 

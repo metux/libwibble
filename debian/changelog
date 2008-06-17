@@ -1,3 +1,100 @@
+libwibble (0.1.19) unstable; urgency=low
+
+  * Add missing constructors for some core::list classes,
+  * fix some compiler warnings.
+
+ -- Petr Rockai <mornfall@debian.org>  Tue, 17 Jun 2008 23:05:58 +0200
+
+libwibble (0.1.18) unstable; urgency=low
+
+  * Added versioned dependency on CDBS.  Closes: #486590.
+
+ -- Enrico Zini <enrico@debian.org>  Tue, 17 Jun 2008 12:37:08 +0100
+
+libwibble (0.1.17) unstable; urgency=low
+
+  [ Enrico Zini ]
+  * Fixes for OS X,
+  * simplistic mmap support,
+  * PosixBuf,
+  * allow to use Splitter with STL algorithms,
+  * bugfixes.
+
+  [ Petr Rockai ]
+  * Get back setValue for options in commandline parser,
+  * added TPair to wibble/sfinae.h,
+  * include a generic list utility library,
+  * implement simple formatting (str::fmt) of sets and lists,
+  * a new assert implementation,
+  * fix a bug in build system that caused FTBFS with cmake 2.6
+    (closes: #482246).
+
+ -- Petr Rockai <mornfall@debian.org>  Mon, 26 May 2008 23:24:47 +0200
+
+libwibble (0.1.16) unstable; urgency=low
+
+  * Added missing commandline::ExistingFile::toString
+
+ -- Enrico Zini <enrico@debian.org>  Fri, 28 Mar 2008 10:16:57 +0800
+
+libwibble (0.1.15) unstable; urgency=low
+
+  * Yaml parsing
+  * Base64 codec
+  * Path manipulations including abspath
+  * Compiles with -Wall -Werror
+  * Implemented repeatable options that accumulate values in a vector
+
+ -- Enrico Zini <enrico@debian.org>  Mon, 10 Mar 2008 23:03:19 +0100
+
+libwibble (0.1.14) unstable; urgency=low
+
+  * Fixed a C++ error that mysteriously only shows up on ARM.
+  * Fixed XS-Vcs-Darcs field
+
+ -- Enrico Zini <enrico@debian.org>  Thu, 07 Feb 2008 10:19:29 +0000
+
+libwibble (0.1.13) unstable; urgency=low
+
+  * Builds with GCC 4.3.  Closes: #455630
+  * Build and install Doxygen documentation.
+
+ -- Enrico Zini <enrico@debian.org>  Wed, 30 Jan 2008 20:58:09 +0100
+
+libwibble (0.1.12) unstable; urgency=low
+
+  [ Enrico Zini ]
+  * Split the repository in embeddable and standalone
+  * Allow commandline-using programs to output a manpage just with --manpage
+    and without needing --manpage=/dev/null
+  * Added X-Vcs-Darcs: header
+  * Added missing include.  Closes: #455630.
+
+  [ Petr Rockai ]
+  * Add a new header, wibble/sfinae.h to ease execution of SFINAE
+    pattern: substitution failure is not an error (consult google),
+  * change internals of Amorph to not require boost, consequently:
+  * remove boost build dependency.
+  * Completely new testing framework is now part of wibble.
+
+ -- Petr Rockai <mornfall@debian.org>  Wed, 23 Jan 2008 00:12:19 +0100
+
+libwibble (0.1.11) unstable; urgency=low
+
+  * Added wibble::Splitter, to split strings using regexps
+  * Added wibble::str::* collection of little useful string operations
+  * Added missing include.  Closes: #441562.
+
+ -- Enrico Zini <enrico@debian.org>  Mon, 17 Sep 2007 16:37:10 +0200
+
+libwibble (0.1.10) unstable; urgency=low
+
+  * Added missing includes, applying tbm's patch.  Closes: #417368.
+  * Added a way to see if an option was set or not.
+  * Added wibble/text/wordwrap
+
+ -- Enrico Zini <enrico@debian.org>  Thu, 24 May 2007 11:11:48 +0200
+
 libwibble (0.1.9) unstable; urgency=low
 
   * Added sys/fs.h functions mkpath, mkFilePath, mkdirIfMissing

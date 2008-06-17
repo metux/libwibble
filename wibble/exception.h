@@ -22,9 +22,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
  */
 
+#include <wibble/test.h> // for assert
 #include <exception>
 #include <typeinfo>
 #include <string>
+#include <sstream>
+#include <iterator>
 #include <vector>
 
 /*! \file
@@ -99,6 +102,29 @@ public:
 	~InstallUnexpected();
 };
 
+// TODO this needs to be made useful with threading as well
+struct AddContext {
+    static std::vector< std::string > s_context;
+
+    template< typename O >
+    static void copyContext( O out ) {
+        std::copy( s_context.begin(), s_context.end(), out );
+    }
+
+    std::string m_context;
+
+    AddContext( std::string s )
+        : m_context( s )
+    {
+        s_context.push_back( s );
+    }
+
+    ~AddContext() {
+        assert_eq( s_context.back(), m_context );
+        s_context.pop_back();
+    }
+};
+
 /// Store context information for an exception
 class Context
 {
@@ -106,25 +132,34 @@ protected:
 	std::vector<std::string> m_context;
 
 public:
-	Context() throw () {}
-	Context(const std::string& context) throw () { addContext(context); };
+    Context() throw ()
+    {
+        AddContext::copyContext( std::back_inserter( m_context ) );
+    }
 
-	void addContext(const std::string& c) throw () { m_context.push_back(c); }
-	std::string formatContext() const throw ()
-	{
-		if (m_context.empty())
-			return "no context information available";
+    Context(const std::string& context) throw ()
+    {
+        AddContext::copyContext( std::back_inserter( m_context ) );
+        addContext(context);
+    }
 
-		std::string res;
-		for (std::vector<std::string>::const_iterator i = m_context.begin();
-				i != m_context.end(); i++)
-			if (i == m_context.begin())
-				res = *i;
-			else
-				res += ", " + *i;
-		return res;
-	}
-	const std::vector<std::string>& context() const throw () { return m_context; }
+    void addContext(const std::string& c) throw () { m_context.push_back(c); }
+    std::string formatContext() const throw ()
+    {
+        if (m_context.empty())
+            return "no context information available";
+        
+        std::stringstream res;
+        std::copy( m_context.begin(), m_context.end(),
+                   std::ostream_iterator< std::string >( res, ", " ) );
+        std::string r = res.str();
+        return std::string( r, 0, r.length() - 2 );
+    }
+
+    const std::vector<std::string>& context() const throw ()
+    {
+        return m_context;
+    }
 };
 
 /// Base class for all exceptions

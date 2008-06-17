@@ -1,7 +1,8 @@
-#include <wibble/config.h>
 #include <wibble/commandline/doc.h>
+#include <wibble/text/wordwrap.h>
 #include <locale.h>
 #include <errno.h>
+#include <cstdlib>
 #include <set>
 
 using namespace std;
@@ -9,52 +10,6 @@ using namespace std;
 namespace wibble {
 namespace commandline {
 
-
-class WordWrapper
-{
-	const std::string& s;
-	size_t cursor;
-
-public:
-	WordWrapper(const std::string& s) : s(s), cursor(0) {}
-
-	void restart() { cursor = 0; }
-
-	bool hasData() const { return cursor < s.size(); }
-
-	string get(unsigned int width)
-	{
-		if (cursor >= s.size())
-			return "";
-
-		// Find the last work break before `width'
-		unsigned int brk = cursor;
-		for (unsigned int j = cursor; j < s.size() && j < cursor + width; j++)
-		{
-			if (s[j] == '\n')
-			{
-				brk = j;
-				break;
-			} else if (!isspace(s[j]) && (j + 1 == s.size() || isspace(s[j + 1])))
-				brk = j + 1;
-		}
-		if (brk == cursor)
-			brk = cursor + width;
-
-		string res;
-		if (brk >= s.size())
-		{
-			res = string(s, cursor, string::npos);
-			cursor = s.size();
-		} else {
-			res = string(s, cursor, brk - cursor);
-			cursor = brk;
-			while (cursor < s.size() && isspace(s[cursor]))
-				cursor++;
-		}
-		return res;
-	}
-};
 
 class HelpWriter
 {
@@ -88,7 +43,7 @@ void HelpWriter::pad(size_t size)
 
 void HelpWriter::outlist(const std::string& bullet, size_t bulletsize, const std::string& text)
 {
-	WordWrapper wrapper(text);
+	text::WordWrap wrapper(text);
 	size_t rightcol = m_width - bulletsize;
 
 	out << bullet;
@@ -106,7 +61,7 @@ void HelpWriter::outlist(const std::string& bullet, size_t bulletsize, const std
 
 void HelpWriter::outstring(const std::string& str)
 {
-	WordWrapper wrapper(str);
+	text::WordWrap wrapper(str);
 
 	while (wrapper.hasData())
 	{
@@ -121,16 +76,21 @@ void Help::outputOptions(ostream& out, HelpWriter& writer, const Engine& p)
 	size_t maxLeftCol = 0;
 	for (vector<OptionGroup*>::const_iterator i = p.groups().begin();
 			i != p.groups().end(); i++)
+	{
+		if ((*i)->hidden) continue;
 		for (vector<Option*>::const_iterator j = (*i)->options.begin();
 				j != (*i)->options.end(); j++)
 		{
+			if ((*j)->hidden) continue;
 			size_t w = (*j)->fullUsage().size();
 			if (w > maxLeftCol)
 				maxLeftCol = w;
 		}
+	}
 	for (vector<Option*>::const_iterator j = p.options().begin();
 			j != p.options().end(); j++)
 	{
+		if ((*j)->hidden) continue;
 		size_t w = (*j)->fullUsage().size();
 		if (w > maxLeftCol)
 			maxLeftCol = w;
@@ -144,6 +104,7 @@ void Help::outputOptions(ostream& out, HelpWriter& writer, const Engine& p)
 		for (vector<OptionGroup*>::const_iterator i = p.groups().begin();
 				i != p.groups().end(); i++)
 		{
+			if ((*i)->hidden) continue;
 			if (!(*i)->description.empty())
 			{
 				out << endl;
@@ -152,7 +113,10 @@ void Help::outputOptions(ostream& out, HelpWriter& writer, const Engine& p)
 			}
 			for (vector<Option*>::const_iterator j = (*i)->options.begin();
 					j != (*i)->options.end(); j++)
+			{
+				if ((*j)->hidden) continue;
 				writer.outlist(" " + (*j)->fullUsage(), maxLeftCol + 3, (*j)->description);
+			}
 		}
 		if (!p.options().empty())
 		{
@@ -161,7 +125,10 @@ void Help::outputOptions(ostream& out, HelpWriter& writer, const Engine& p)
 			out << endl;
 			for (vector<Option*>::const_iterator j = p.options().begin();
 					j != p.options().end(); j++)
+			{
+				if ((*j)->hidden) continue;
 				writer.outlist(" " + (*j)->fullUsage(), maxLeftCol + 3, (*j)->description);
+			}
 		}
 	}
 }
@@ -179,12 +146,13 @@ void Help::outputHelp(std::ostream& out, const Engine& p)
 	{
 		// Dig informations from p
 		const std::vector<Engine*>& commands = p.commands();
-	
+
 		// Compute the maximum length of alias names
 		size_t maxAliasSize = 0;
 		for (vector<Engine*>::const_iterator i = commands.begin();
 				i != commands.end(); i++)
 		{
+			if ((*i)->hidden) continue;
 			const string& str = (*i)->primaryAlias;
 			if (maxAliasSize < str.size())
 				maxAliasSize = str.size();
@@ -201,6 +169,7 @@ void Help::outputHelp(std::ostream& out, const Engine& p)
 		for (vector<Engine*>::const_iterator i = commands.begin();
 				i != commands.end(); i++)
 		{
+			if ((*i)->hidden) continue;
 			string aliases;
 			const vector<string>& v = (*i)->aliases;
 			if (!v.empty())
@@ -218,7 +187,8 @@ void Help::outputHelp(std::ostream& out, const Engine& p)
 			writer.outlist(" " + (*i)->primaryAlias, maxAliasSize + 3, (*i)->description + "." + aliases);
 		}
 	} else {
-		if (p.primaryAlias.empty())
+ 		// FIXME the || m_app == thing is a workaround...
+		if (p.primaryAlias.empty() || m_app == p.primaryAlias)
 			out << "Usage: " << m_app << " [options] " << p.usage << endl;
 		else
 			out << "Usage: " << m_app << " [options] " << p.primaryAlias << " [options] " << p.usage << endl;
@@ -277,7 +247,7 @@ void Manpage::outputParagraph(std::ostream& out, const std::string& str)
 				break;
 			default:
 				out << str[i];
-		}		
+		}
 	out << '\n';
 }
 
@@ -315,11 +285,15 @@ void Manpage::outputOptions(std::ostream& out, const Engine& p)
 	for (vector<OptionGroup*>::const_iterator i = p.groups().begin();
 			i != p.groups().end(); i++)
 	{
+		if ((*i)->hidden) continue;
 		if (!(*i)->description.empty())
 			out << endl << (*i)->description << ":" << endl;
 		for (vector<Option*>::const_iterator j = (*i)->options.begin();
 				j != (*i)->options.end(); ++j)
+		{
+			if ((*j)->hidden) continue;
 			outputOption(out, *j);
+		}
 		out << ".PP" << endl;
 	}
 
@@ -329,7 +303,10 @@ void Manpage::outputOptions(std::ostream& out, const Engine& p)
 		out << "Other options:" << endl;
 		for (vector<Option*>::const_iterator j = p.options().begin();
 				j != p.options().end(); ++j)
+		{
+			if ((*j)->hidden) continue;
 			outputOption(out, *j);
+		}
 	}
 }
 
@@ -360,6 +337,7 @@ void Manpage::output(std::ostream& out, const Engine& p)
 		for (vector<Engine*>::const_iterator i = commands.begin();
 				i != commands.end(); i++)
 		{
+			if ((*i)->hidden) continue;
 			out << ".TP" << endl;
 			out << "\\fB" << (*i)->primaryAlias << "\\fP";
 
@@ -392,6 +370,7 @@ void Manpage::output(std::ostream& out, const Engine& p)
 		for (vector<Engine*>::const_iterator i = commands.begin();
 				i != commands.end(); i++)
 		{
+			if ((*i)->hidden) continue;
 			out << "\\fBOptions for command " << (*i)->primaryAlias << "\\fP" << endl;
 			out << ".br" << endl;
 			outputOptions(out, **i);

@@ -4,6 +4,7 @@
 #include <string>
 #include <dirent.h>		// opendir, closedir
 #include <memory>		// auto_ptr
+#include <sys/types.h>		// mode_t
 
 struct stat;
 
@@ -21,6 +22,11 @@ std::auto_ptr<struct stat> stat(const std::string& pathname);
 /// access() a filename
 bool access(const std::string &s, int m);
 
+/**
+ * Get the absolute path of a file
+ */
+std::string abspath(const std::string& pathname);
+
 /// Create the given directory, if it does not already exists.
 /// It will complain if the given pathname already exists but is not a
 /// directory.
@@ -33,6 +39,10 @@ void mkpath(const std::string& dir);
 /// Ensure that the path to the given file exists, creating it if it does not.
 /// The file itself will not get created.
 void mkFilePath(const std::string& file);
+
+/// Read file into memory. Throws exceptions on failure.
+std::string readFile(const std::string &file);
+void writeFile(const std::string &file, const std::string &data);
 
 /// Nicely wrap access to directories
 class Directory

@@ -26,12 +26,12 @@
 namespace wibble {
 namespace sys {
 
-Buffer::Data::Data(size_t size) throw () : _ref(0), _size(size)
+Buffer::Data::Data(size_t size) : _ref(0), _size(size)
 {
 	_data = malloc(size);
 }
 
-Buffer::Data::Data(void* buf, size_t size, bool own) throw ()
+Buffer::Data::Data(void* buf, size_t size, bool own)
 	: _ref(0), _size(size)
 {
 	if (own)
@@ -43,21 +43,21 @@ Buffer::Data::Data(void* buf, size_t size, bool own) throw ()
 	}
 }
 
-Buffer::Data::Data(const void* buf, size_t size) throw ()
+Buffer::Data::Data(const void* buf, size_t size)
 	: _ref(0), _size(size)
 {
 	_data = malloc(size);
 	memcpy(_data, buf, size);
 }
 
-Buffer::Data::~Data() throw ()
+Buffer::Data::~Data()
 {
 	if (_data)
 		free(_data);
 }
 	
 
-void Buffer::Data::resize(size_t size) throw ()
+void Buffer::Data::resize(size_t size)
 {
 	if (size == 0)
 	{
@@ -72,6 +72,34 @@ void Buffer::Data::resize(size_t size) throw ()
 		_data = realloc(_data, size);
 	}
 	_size = size;
+}
+
+/// Compare the contents of two buffers
+bool Buffer::Data::operator==(const Data& d) const throw()
+{
+	if (_size != d._size)
+		return false;
+	if (_data == 0 && d._data == 0)
+		return true;
+	if (_data == 0 || d._data == 0)
+		return false;
+	return memcmp(_data, d._data, _size) == 0;
+}
+
+/// Compare the contents of two buffers
+bool Buffer::Data::operator<(const Data& d) const throw()
+{
+	if (_size < d._size)
+		return true;
+	if (_size > d._size)
+		return false;
+	if (_data == 0 && d._data == 0)
+		return false;
+	if (_data == 0)
+		return true;
+	if (d._data == 0)
+		return false;
+	return memcmp(_data, d._data, _size) < 0;
 }
 
 }

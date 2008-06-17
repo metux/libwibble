@@ -1,0 +1,75 @@
+#include <unistd.h>
+#include <wibble/sys/pipe.h>
+
+#define RUN(x, y) x().y()
+
+struct RunTest {
+    const char *name;
+    void (*run)();
+};
+
+struct RunSuite {
+    const char *name;
+    RunTest *tests;
+    int testCount;
+};
+
+struct RunAll {
+    RunSuite *suites;
+    int suiteCount;
+    FILE *status;
+    wibble::sys::Pipe confirm;
+
+    RunSuite *findSuite( std::string name ) {
+        for ( int i = 0; i < suiteCount; ++i )
+            if ( suites[i].name == name )
+                return suites + i;
+        return 0;
+    }
+
+    void waitForAck() {
+        std::string line = confirm.nextLineBlocking();
+        assert_eq( std::string( "ack" ), line );
+    }
+
+    void runSuite( RunSuite &s, int fromTest, int suite, int suiteCount )
+    {
+        fprintf( status, "s/s: (%d/%d) %s\n", suite + 1, suiteCount, s.name );
+        for ( int i = fromTest; i < s.testCount; ++i ) {
+            fprintf( status, "t/s: (%d/%d) %s\n", i, s.testCount,
+                     s.tests[i].name );
+            fflush( status );
+            waitForAck();
+            s.tests[i].run();
+            fprintf( status, "t/d: %s\n", s.tests[i].name );
+            fflush( status );
+            waitForAck();
+            // exit( 0 ); // TODO make this optional; safety vs
+                       // performance tradeoff
+        }
+        fprintf( status, "s/d: %s\n", s.name );
+    }
+
+    void runTest( RunSuite &s, int test )
+    {
+        fprintf( status, "s/s: (1/1) %s\n", s.name );
+        fprintf( status, "t/s: (1/1) %s\n", s.tests[test].name );
+        fflush( status );
+        waitForAck();
+        s.tests[test].run();
+        fprintf( status, "t/d: %s\n", s.tests[test].name );
+        fflush( status );
+        waitForAck();
+        fprintf( status, "s/d: %s\n", s.name );
+    }
+
+    void runFrom( int suite, int test )
+    {
+        for ( int i = suite; i < suiteCount; ++i ) {
+            assert( suite <= suiteCount );
+            runSuite( suites[i], test, i, suiteCount );
+            test = 0;
+        }
+    }
+};
+

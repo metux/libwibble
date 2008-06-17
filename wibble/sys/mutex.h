@@ -23,6 +23,7 @@
 
 #include <wibble/exception.h>
 #include <pthread.h>
+#include <errno.h>
 
 namespace wibble {
 namespace sys {
@@ -36,9 +37,18 @@ protected:
 	pthread_mutex_t mutex;
 	
 public:
-	Mutex()
+	Mutex(bool recursive = false)
 	{
-		if (int res = pthread_mutex_init(&mutex, 0))
+            pthread_mutexattr_t attr;
+            pthread_mutexattr_init( &attr );
+            if ( recursive ) {
+#ifdef __APPLE__
+                pthread_mutexattr_settype( &attr, PTHREAD_MUTEX_RECURSIVE );
+#else
+                pthread_mutexattr_settype( &attr, PTHREAD_MUTEX_RECURSIVE_NP );
+#endif
+            }
+		if (int res = pthread_mutex_init(&mutex, &attr))
 			throw wibble::exception::System(res, "creating pthread mutex");
 	}
 	~Mutex()
@@ -46,6 +56,16 @@ public:
 		if (int res = pthread_mutex_destroy(&mutex))
 			throw wibble::exception::System(res, "destroying pthread mutex");
 	}
+
+        bool trylock()
+        {
+            int res = pthread_mutex_trylock(&mutex);
+            if ( res == EBUSY )
+                return false;
+            if ( res == 0 )
+                return true;
+            throw wibble::exception::System(res, "(try)locking pthread mutex");
+        }
 
 	/// Lock the mutex
 	/// Normally it's better to use MutexLock
@@ -131,6 +151,12 @@ public:
 	void wait(MutexLock& l)
 	{
 		if (int res = pthread_cond_wait(&cond, &l.mutex.mutex))
+			throw wibble::exception::System(res, "waiting on a pthread condition");
+	}
+
+	void wait(Mutex& l)
+	{
+		if (int res = pthread_cond_wait(&cond, &l.mutex))
 			throw wibble::exception::System(res, "waiting on a pthread condition");
 	}
 

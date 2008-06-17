@@ -17,12 +17,12 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
  */
-#include <wibble/config.h>
 #include <wibble/exception.h>
 
 #include <string.h> // strerror_r
 #include <errno.h>
 
+#include <cstdlib>
 #include <typeinfo>
 #include <sstream>
 #include <iostream>
@@ -33,6 +33,8 @@ using namespace std;
 
 namespace wibble {
 namespace exception {
+
+std::vector< std::string > AddContext::s_context;
 
 void DefaultUnexpected()
 {
@@ -79,13 +81,19 @@ System::System(int code, const std::string& context) throw ()
 
 string System::desc() const throw ()
 {
-	// FIXME: this use of strerror_r is broken on non-GNU systems
 	const int buf_size = 500;
 	char buf[buf_size];
-	char* res;
-	res = strerror_r(m_errno, buf, buf_size);
-	buf[buf_size - 1] = 0;
-	return string(res);
+#if (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600) && ! _GNU_SOURCE
+	if (strerror_r(m_errno, buf, buf_size))
+	{
+		buf[buf_size - 1] = 0;
+		return string(buf);
+	} else {
+		return "Unable to get a description for errno value";
+	}
+#else
+	return string(strerror_r(m_errno, buf, buf_size));
+#endif
 }
 
 }
