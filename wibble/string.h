@@ -25,8 +25,10 @@
 #include <wibble/operators.h>
 #include <wibble/sfinae.h>
 
+#include <cstdarg>
 #include <string>
 #include <set>
+#include <vector>
 #include <sstream>
 #include <cctype>
 
@@ -54,6 +56,16 @@ inline typename TPair< std::ostream, typename X::Type >::First &operator<<(
     return o << " ]";
 }
 
+static inline std::string fmt( std::string f, ... ) {
+    char *c;
+    va_list ap;
+    va_start( ap, f );
+    vasprintf( &c, f.c_str(), ap );
+    std::string ret( c );
+    free( c );
+    return ret;
+}
+
 /// Format any value into a string using a std::stringstream
 template< typename T >
 inline std::string fmt(const T& val)
@@ -68,20 +80,35 @@ template<> inline std::string fmt<std::string>(const std::string& val) {
 }
 template<> inline std::string fmt<char*>(char * const & val) { return val; }
 
+template< typename C >
+inline std::string fmt_container( const C &c, char f, char l )
+{
+    std::string s;
+    s += f;
+    if ( c.empty() )
+        return s + l;
+
+    s += ' ';
+    for ( typename C::const_iterator i = c.begin(); i != c.end(); ++i ) {
+        s += fmt( *i );
+        if ( i != c.end() && i + 1 != c.end() )
+            s += ", ";
+    }
+    s += ' ';
+    s += l;
+    return s;
+}
+
 // formatting sets using { ... } notation
 template< typename X >
 inline std::string fmt(const std::set< X >& val) {
-    if ( val.empty() )
-        return "{}";
+    return fmt_container( val, '{', '}' );
+}
 
-    std::string s;
-    for ( typename std::set< X >::iterator i = val.begin();
-          i != val.end(); ++i ) {
-        s += fmt( *i );
-        if ( i != val.end() && i + 1 != val.end() )
-            s += ", ";
-    }
-    return "{ " + s + " }";
+// formatting vectors using [ ... ] notation
+template< typename X >
+inline std::string fmt(const std::vector< X > &val) {
+    return fmt_container( val, '[', ']' );
 }
 
 /// Given a pathname, return the file name without its path
@@ -407,7 +434,6 @@ public:
 	const_iterator begin(std::istream& in) { return const_iterator(in); }
 	const_iterator end() { return const_iterator(); }
 };
-
 
 }
 }

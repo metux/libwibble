@@ -1,3 +1,31 @@
+libwibble (0.1.22) unstable; urgency=low
+
+  * Avoid double free corruption in cases where wibble is linked into both
+    executable and a shared library it uses (doubly called static
+    destructor),
+  * add sys::ChildProcess::waitForSuccess(),
+  * fix some compiler warnings.
+
+ -- Petr Rockai <mornfall@debian.org>  Sun, 17 Aug 2008 12:15:51 +0200
+
+libwibble (0.1.21) experimental; urgency=low
+
+  * Make list::map work on non-default-constructible functors,
+  * add list::output( list, output_iterator ),
+  * change the exception formatting to span multiple lines (more readable
+    with bigger contexts),
+  * implement str::fmt for vectors.
+
+ -- Petr Rockai <mornfall@debian.org>  Tue, 05 Aug 2008 19:43:04 +0200
+
+libwibble (0.1.20) experimental; urgency=low
+
+  * Add std::string str::fmt(std::string, ...) - asprintf style,
+  * provide sys::ChildProcess::running() predicate,
+  * fix a bunch of compiler warnings.
+
+ -- Petr Rockai <mornfall@debian.org>  Thu, 31 Jul 2008 13:45:52 +0200
+
 libwibble (0.1.19) unstable; urgency=low
 
   * Add missing constructors for some core::list classes,

@@ -94,7 +94,7 @@ struct Sorted
     typedef typename List::Type Type;
     List m_list;
     mutable SharedPtr m_sorted;
-    int m_pos;
+    size_t m_pos;
 
     void sort() const {
         if ( m_sorted )
@@ -245,17 +245,25 @@ struct Take {
 template< typename List, typename F >
 struct Map {
     List l;
-    F f;
+
+    char f_space[ sizeof( F ) ];
+    F &f() {
+        return *(F *)f_space;
+    }
+    const F &f() const {
+        return *(const F *)f_space;
+    }
+
     typedef typename F::result_type Type;
 
     Type head() const {
-        return f( l.head() );
+        return f()( l.head() );
     }
 
     Map tail() const {
         Map m;
         m.l = l.tail();
-        m.f = f;
+        m.f() = f();
         return m;
     }
 
@@ -265,8 +273,10 @@ struct Map {
 
     Map() {}
     Map( const List &_l, const F &_f ) 
-        : l( _l ), f( _f )
-    {}
+        : l( _l )
+    {
+        f() = _f;
+    }
 };
 
 template< typename T >
@@ -390,6 +400,11 @@ template< typename List >
 Take< List > take( int t, List l )
 {
     return Take< List >( l, t );
+}
+
+template< typename List, typename Out >
+void output( List l, Out it ) {
+    std::copy( ListIterator< List >( l ), ListIterator< List >(), it );
 }
 
 template< typename List >

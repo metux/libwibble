@@ -104,11 +104,18 @@ public:
 
 // TODO this needs to be made useful with threading as well
 struct AddContext {
-    static std::vector< std::string > s_context;
+    static std::vector< std::string > *s_context;
+
+    static std::vector< std::string > &context() {
+        if ( s_context )
+            return *s_context;
+        s_context = new std::vector< std::string >();
+        return *s_context;
+    }
 
     template< typename O >
     static void copyContext( O out ) {
-        std::copy( s_context.begin(), s_context.end(), out );
+        std::copy( context().begin(), context().end(), out );
     }
 
     std::string m_context;
@@ -116,12 +123,12 @@ struct AddContext {
     AddContext( std::string s )
         : m_context( s )
     {
-        s_context.push_back( s );
+        context().push_back( s );
     }
 
     ~AddContext() {
-        assert_eq( s_context.back(), m_context );
-        s_context.pop_back();
+        assert_eq( context().back(), m_context );
+        context().pop_back();
     }
 };
 
@@ -151,9 +158,9 @@ public:
         
         std::stringstream res;
         std::copy( m_context.begin(), m_context.end(),
-                   std::ostream_iterator< std::string >( res, ", " ) );
+                   std::ostream_iterator< std::string >( res, ", \n    " ) );
         std::string r = res.str();
-        return std::string( r, 0, r.length() - 2 );
+        return std::string( r, 0, r.length() - 7 );
     }
 
     const std::vector<std::string>& context() const throw ()
@@ -198,7 +205,8 @@ public:
 	virtual const std::string& fullInfo() const throw ()
 	{
 		if (m_formatted.empty())
-			m_formatted = desc() + ". Context: " + formatContext();
+			m_formatted = desc() + ". Context:\n    "
+                                      + formatContext();
 		return m_formatted;
 	}
 
