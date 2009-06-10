@@ -1,3 +1,10 @@
+libwibble (0.1.22ubuntu1) karmic; urgency=low
+
+  * wibble/string.h:
+    - Fix gcc-4.4 FTBFS by including <cstdio> (LP: #385317)
+
+ -- Michael Terry <michael.terry@canonical.com>  Wed, 10 Jun 2009 09:33:30 -0400
+
 libwibble (0.1.22) unstable; urgency=low
 
   * Avoid double free corruption in cases where wibble is linked into both

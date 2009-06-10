@@ -31,6 +31,7 @@
 #include <vector>
 #include <sstream>
 #include <cctype>
+#include <cstdio>
 
 namespace wibble {
 namespace str {
