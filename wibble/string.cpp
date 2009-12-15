@@ -23,11 +23,32 @@
 #include <stack>
 #include <cstdio>
 #include <cstdlib>
+#include <cstdarg>
 
 using namespace std;
 
 namespace wibble {
 namespace str {
+
+std::string fmtf( const char* f, ... ) {
+    char *c;
+    va_list ap;
+    va_start( ap, f );
+    vasprintf( &c, f, ap );
+    std::string ret( c );
+    free( c );
+    return ret;
+}
+
+std::string fmt( const char* f, ... ) {
+    char *c;
+    va_list ap;
+    va_start( ap, f );
+    vasprintf( &c, f, ap );
+    std::string ret( c );
+    free( c );
+    return ret;
+}
 
 std::string normpath(const std::string& pathname)
 {

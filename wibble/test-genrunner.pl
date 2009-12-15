@@ -47,6 +47,7 @@ sub dumpfile() {
     my $filecpp = $file;
     $filecpp =~ s/.test.h$/.cpp/;
     $filecpp =~ s,/,_,g;
+    print "#undef NDEBUG\n";
     print "#include \"$file\"\n";
     print "#define RUN(x,y) x().y()\n";
     
@@ -84,7 +85,7 @@ sub dumpmain() {
     }
     print "};\n";
     print "#include <wibble/test-main.h>\n";
-    print "int assertFailure = 0;\n";
+    #print "int assertFailure = 0;\n";
 }
 for $file (@ARGV) {
     &process ($file);
