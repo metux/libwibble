@@ -1,3 +1,26 @@
+libwibble (0.1.24-1) unstable; urgency=low
+
+  * Disabled tests that fail on HPPA until mornfall will manage to
+    investigate. Closes: #561187.
+
+ -- Enrico Zini <enrico@debian.org>  Tue, 15 Dec 2009 17:36:34 +0000
+
+libwibble (0.1.23-1) unstable; urgency=low
+
+  * New upstream version
+     + Add wibble::sys
+     + Improvement in Mutex
+     + Lockfile support
+     + Added missing include. Closes: #504896
+     + Added today and now to grcal
+     + Deprecate str::fmt(format, args...) in favour of str::fmtf
+  * Switch to non-native packaging
+  * Updated standards-version
+  * Updated Vcs-Darcs location
+  * Added Homepage field
+
+ -- Enrico Zini <enrico@debian.org>  Mon, 14 Dec 2009 13:24:26 +0000
+
 libwibble (0.1.22) unstable; urgency=low
 
   * Avoid double free corruption in cases where wibble is linked into both

@@ -7,7 +7,7 @@ include /usr/share/cdbs/1/class/cmake.mk
 CC = /usr/bin/gcc
 CXX = /usr/bin/g++
 
-DEB_MAKE_CHECK_TARGET := check
+DEB_MAKE_CHECK_TARGET := unit
 # Comment out the following line to use cmake
 #DEB_CONFIGURE_EXTRA_FLAGS += --disable-shared --with-pic
 
@@ -22,3 +22,11 @@ build/libwibble-dev::
 # dh_installdocs here since the name of the build directory changes every time.
 binary-install/libwibble-dev::
 	dh_installdocs -p$(cdbs_curpkg) -n ${DEB_BUILDDIR}/doc/html
+
+tarball:
+	if darcs wh -l; then (echo "There are uncommitted changes or spurious files"; /bin/false); fi
+	sh debian/check_versions
+	VER=`grep '^set( *VERSION' CMakeLists.txt |sed -r 's/.+"([^"]+)".+/\1/'` && tar --transform "s/^./libwibble-$$VER/" --exclude=_darcs --exclude=debian -zcf ../libwibble-$$VER.tar.gz . && ln -f ../libwibble-$$VER.tar.gz ../libwibble_$$VER.orig.tar.gz
+
+debsrc: tarball
+	debuild -us -uc -S -i_darcs -I_darcs

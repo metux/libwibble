@@ -3,13 +3,14 @@ Section: libdevel
 Priority: optional
 Maintainer: libapt-front developers <libapt-front-devel@lists.alioth.debian.org>
 Uploaders: Petr Rockai <mornfall@debian.org>, Enrico Zini <enrico@debian.org>
-Build-Depends: cdbs (>= 0.4.51), debhelper (>> 4.1), dh-buildinfo, doxygen, cmake
-Standards-Version: 3.7.3
-Vcs-Darcs: http://people.debian.org/~enrico/wibble/standalone
+Build-Depends: cdbs (>= 0.4.51), debhelper (>= 5.0), dh-buildinfo, doxygen, cmake
+Standards-Version: 3.8.3.0
+Vcs-Darcs: http://patch-tag.com/r/wibble-standalone/
+Homepage: http://web.mornfall.net/libwibble.html
 
 Package: libwibble-dev
-Section: libdevel
 Architecture: any
+Depends: ${misc:Depends}
 Recommends: pkg-config
 Description: Library of various useful C++ code
  libwibble collects the foundation code that has been used over time

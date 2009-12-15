@@ -12,19 +12,35 @@ extern int assertFailure;
 
 struct Location {
     const char *file;
-    int line;
-    std::string stmt;
-    Location( const char *f, int l, std::string st )
-        : file( f ), line( l ), stmt( st ) {}
+    int line, iteration;
+    const char *stmt;
+    Location( const char *f, int l, const char *st, int iter = -1 )
+        : file( f ), line( l ), iteration( iter ), stmt( st ) {}
 };
 
 #define LOCATION(stmt) Location( __FILE__, __LINE__, stmt )
+
+#ifndef NDEBUG
+#define LOCATION_I(stmt, i) Location( __FILE__, __LINE__, stmt, i )
 #define assert(x) assert_fn( LOCATION( #x ), x )
+#define assert_pred(p, x) assert_pred_fn( \
+        LOCATION( #p "( " #x " )" ), x, p( x ) )
 #define assert_eq(x, y) assert_eq_fn( LOCATION( #x " == " #y ), x, y )
+#define assert_eq_l(i, x, y) assert_eq_fn( LOCATION_I( #x " == " #y, i ), x, y )
 #define assert_neq(x, y) assert_neq_fn( LOCATION( #x " != " #y ), x, y )
 #define assert_list_eq(x, y) \
     assert_list_eq_fn( LOCATION( #x " == " #y ), \
                        sizeof( y ) / sizeof( y[0] ), x, y )
+#else
+#define assert(x)
+#define assert_pred(p, x)
+#define assert_eq(x, y)
+#define assert_eq_l(i, x, y)
+#define assert_neq(x, y)
+#define assert_list_eq(x, y)
+#endif
+
+#define assert_die() assert_die_fn( LOCATION( "forbidden code path tripped" ) )
 
 struct AssertFailed {
     std::ostream &stream;
@@ -34,8 +50,10 @@ struct AssertFailed {
         : stream( s )
     {
         expect = assertFailure > 0;
-        str << l.file << ": " << l.line
-            << ": assertion `" << l.stmt << "' failed;";
+        str << l.file << ": " << l.line;
+        if ( l.iteration != -1 )
+            str << " (iteration " << l.iteration << ")";
+        str << ": assertion `" << l.stmt << "' failed;";
     }
 
     ~AssertFailed() {
@@ -63,6 +81,8 @@ void assert_fn( Location l, X x )
     }
 }
 
+void assert_die_fn( Location l ) __attribute__((noreturn));
+
 template< typename X, typename Y >
 void assert_eq_fn( Location l, X x, Y y )
 {
@@ -71,6 +91,15 @@ void assert_eq_fn( Location l, X x, Y y )
         f << " got ["
           << x << "] != [" << y
           << "] instead";
+    }
+}
+
+template< typename X >
+void assert_pred_fn( Location l, X x, bool p )
+{
+    if ( !p ) {
+        AssertFailed f( l );
+        f << " for " << x;
     }
 }
 
