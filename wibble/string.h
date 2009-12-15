@@ -25,13 +25,11 @@
 #include <wibble/operators.h>
 #include <wibble/sfinae.h>
 
-#include <cstdarg>
 #include <string>
 #include <set>
 #include <vector>
 #include <sstream>
 #include <cctype>
-#include <cstdio>
 
 namespace wibble {
 namespace str {
@@ -57,15 +55,8 @@ inline typename TPair< std::ostream, typename X::Type >::First &operator<<(
     return o << " ]";
 }
 
-static inline std::string fmt( std::string f, ... ) {
-    char *c;
-    va_list ap;
-    va_start( ap, f );
-    vasprintf( &c, f.c_str(), ap );
-    std::string ret( c );
-    free( c );
-    return ret;
-}
+std::string fmt( const char* f, ... ) __attribute__ ((deprecated));
+std::string fmtf( const char* f, ... );
 
 /// Format any value into a string using a std::stringstream
 template< typename T >

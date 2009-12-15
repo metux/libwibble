@@ -22,6 +22,18 @@ std::auto_ptr<struct stat> stat(const std::string& pathname)
 	return res;
 }
 
+bool isDirectory(const std::string& pathname)
+{
+	struct stat st;
+	if (::stat(pathname.c_str(), &st) == -1) {
+		if (errno == ENOENT)
+			return false;
+		else
+			throw wibble::exception::System("getting file information for " + pathname);
+        }
+	return S_ISDIR(st.st_mode);
+}
+
 bool access(const std::string &s, int m)
 {
 	return ::access(s.c_str(), m) == 0;
@@ -88,6 +100,17 @@ void writeFile( const std::string &file, const std::string &data )
     if (!out.is_open())
         throw wibble::exception::System( "writing file " + file );
     out << data;
+}
+
+bool deleteIfExists(const std::string& file)
+{
+	if (unlink(file.c_str()) != 0)
+		if (errno != ENOENT)
+			throw wibble::exception::File(file, "removing file");
+		else
+			return false;
+	else
+		return true;
 }
 
 Directory::const_iterator Directory::begin()

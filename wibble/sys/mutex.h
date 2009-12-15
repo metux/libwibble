@@ -96,17 +96,46 @@ public:
 /**
  * Acquire a mutex lock, RAII-style
  */
-class MutexLock
+template< typename Mutex >
+class MutexLockT
 {
 protected:
 	Mutex& mutex;
+        bool locked;
+        bool yield;
 	
 public:
-	MutexLock(Mutex& m) : mutex(m) { mutex.lock(); }
-	~MutexLock() { mutex.unlock(); }
+        MutexLockT(Mutex& m) : mutex(m), locked( false ), yield( false ) {
+            mutex.lock();
+            locked = true;
+        }
+
+	~MutexLockT() {
+            if ( locked ) {
+                mutex.unlock();
+                checkYield();
+            }
+        }
+
+        void drop() {
+            mutex.unlock();
+            locked = false;
+            checkYield();
+        }
+        void reclaim() { mutex.lock(); locked = true; }
+        void setYield( bool y ) {
+            yield = y;
+        }
+
+        void checkYield() {
+            if ( yield )
+                sched_yield();
+        }
 
 	friend class Condition;
 };
+
+typedef MutexLockT< Mutex > MutexLock;
 
 /*
  * pthread condition wrapper.
