@@ -21,7 +21,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
  */
 
+#include <wibble/sys/macros.h>
 #include <wibble/exception.h>
+
+#ifdef POSIX
 #include <sys/types.h>
 
 namespace wibble {
@@ -72,6 +75,8 @@ void detachFromTTY();
 }
 }
 }
+
+#endif
 
 // vim:set ts=4 sw=4:
 #endif

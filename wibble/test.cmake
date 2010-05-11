@@ -2,6 +2,7 @@ macro( wibble_add_test name )
   string( REPLACE ".test.h" ".cpp" SOURCES "${ARGN}" )
   set( SOURCES ";${SOURCES}" )
   string( REPLACE "/" "_" SOURCES "${SOURCES}" )
+  string( REPLACE ":" "_" SOURCES "${SOURCES}" )
   set( src_prefix "${CMAKE_CURRENT_BINARY_DIR}/${name}-generated-" )
   string( REPLACE ";" ";${src_prefix}" SOURCES "${SOURCES}" )
   string( REGEX REPLACE "^;" "" SOURCES "${SOURCES}" )
@@ -46,7 +47,8 @@ endmacro( wibble_add_test )
 # TODO the LD_LIBRARY_PATH may need to be set more elaborately
 macro( wibble_check_target tgt )
   add_custom_target( unit_${tgt}
-    COMMAND LD_LIBRARY_PATH=${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/${tgt}
+    COMMAND sh -c "LD_LIBRARY_PATH=${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/${tgt}"
+    VERBATIM
     DEPENDS ${ARGV} )
   add_dependencies( unit unit_${tgt} )
 endmacro( wibble_check_target )

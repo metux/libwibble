@@ -25,11 +25,17 @@
 #include <wibble/operators.h>
 #include <wibble/sfinae.h>
 
+#include <cstdarg>
+#include <cstdio>
 #include <string>
 #include <set>
 #include <vector>
 #include <sstream>
 #include <cctype>
+#ifdef _WIN32
+#include <cstring>
+#include <cstdlib>
+#endif
 
 namespace wibble {
 namespace str {
@@ -54,6 +60,10 @@ inline typename TPair< std::ostream, typename X::Type >::First &operator<<(
     }
     return o << " ]";
 }
+
+#ifdef _WIN32
+static int vasprintf (char **, const char *, va_list);
+#endif
 
 std::string fmt( const char* f, ... ) __attribute__ ((deprecated));
 std::string fmtf( const char* f, ... );

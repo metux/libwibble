@@ -23,17 +23,31 @@ file( GLOB testh *.test.h commandline/*.test.h sys/*.test.h
 
 set( WSRC ${WSRC_TOP} ${WSRC_CMDL} ${WSRC_SYS} ${WSRC_LOG} ${WSRC_TEXT} ${WSRC_GRCAL} ${WSRC_STREAM})
 
+# on some mingw32, regex.h is not on the default include path
+find_path( RX_PATH regex.h )
+include_directories( ${RX_PATH} )
+
 # libwibble.a
+if( NOT WINDOWS )
 set_source_files_properties( ${WSRC} COMPILE_FLAGS -fPIC )
+endif( NOT WINDOWS )
+
 include_directories( ${wibble_SOURCE_DIR}/.. ${wibble_BINARY_DIR}/.. )
 add_definitions( ${OPT_FLAGS} )
 add_library( wibble STATIC ${WSRC} )
-target_link_libraries( wibble pthread )
 
+if( WINDOWS )
+target_link_libraries( wibble wsock32 psapi regex )
+else( WINDOWS )
+target_link_libraries( wibble pthread )
+endif( WINDOWS )
+
+if( NOT WINDOWS )
 # make check
 wibble_add_test( wibble-test ${testh} )
 target_link_libraries( wibble-test wibble )
 wibble_check_target( wibble-test )
+endif( NOT WINDOWS )
 
 set( prefix "${CMAKE_INSTALL_PREFIX}" )
 set( exec_prefix "${prefix}/bin" )

@@ -1,6 +1,10 @@
 // -*- C++ -*-
+#include <wibble/sys/macros.h>
+
 #include <unistd.h>
+#ifdef POSIX
 #include <wibble/sys/pipe.h>
+#endif
 #include <cstdio>
 
 #define RUN(x, y) x().y()
@@ -29,6 +33,7 @@ struct RunFeedback {
     virtual void waitForAck() = 0;
 };
 
+#ifdef POSIX
 struct RunAll {
     RunSuite *suites;
     int suiteCount;
@@ -43,10 +48,10 @@ struct RunAll {
 
     void runSuite( RunSuite &s, int fromTest, int suite, int suiteCount )
     {
-        feedback->status( wibble::str::fmt(
+        feedback->status( wibble::str::fmtf(
             "s/s: (%d/%d) %s", suite + 1, suiteCount, s.name ) );
         for ( int i = fromTest; i < s.testCount; ++i ) {
-            feedback->status( wibble::str::fmt(
+            feedback->status( wibble::str::fmtf(
                 "t/s: (%d/%d) %s", i, s.testCount, s.tests[i].name ) );
             feedback->waitForAck();
             s.tests[i].run();
@@ -78,4 +83,4 @@ struct RunAll {
         }
     }
 };
-
+#endif

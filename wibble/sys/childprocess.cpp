@@ -17,8 +17,9 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
  */
-
 #include <wibble/sys/childprocess.h>
+
+#ifdef POSIX
 
 #include <stdlib.h>		// EXIT_FAILURE
 #include <sys/types.h>		// fork, waitpid, kill, open, getpw*, getgr*, initgroups
@@ -265,14 +266,14 @@ void ChildProcess::waitForSuccess() {
     if ( WIFEXITED( r ) ) {
         if ( WEXITSTATUS( r ) )
             throw exception::Generic(
-                str::fmt( "Subprocess terminated with error %d.",
+                str::fmtf( "Subprocess terminated with error %d.",
                           WEXITSTATUS( r ) ) );
         else
             return;
     }
     if ( WIFSIGNALED( r ) )
         throw exception::Generic(
-            str::fmt( "Subprocess terminated by signal %d.",
+            str::fmtf( "Subprocess terminated by signal %d.",
                       WTERMSIG( r ) ) );
     throw exception::Generic( "Error waiting for subprocess." );
 }
@@ -289,5 +290,5 @@ void ChildProcess::kill(int signal)
 
 }
 }
-
+#endif
 // vim:set ts=4 sw=4:

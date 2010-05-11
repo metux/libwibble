@@ -1,3 +1,16 @@
+libwibble (0.1.26-1) unstable; urgency=low
+
+  * Make process::getcwd() work on freebsd. Thanks to Pino Toscano.
+
+ -- Enrico Zini <enrico@debian.org>  Tue, 11 May 2010 13:41:43 +0100
+
+libwibble (0.1.25-1) unstable; urgency=low
+
+  * New upstream version
+     - Disallow copy of Mutex and Condition objects
+
+ -- Enrico Zini <enrico@debian.org>  Sun, 28 Feb 2010 13:00:44 +0000
+
 libwibble (0.1.24-1) unstable; urgency=low
 
   * Disabled tests that fail on HPPA until mornfall will manage to

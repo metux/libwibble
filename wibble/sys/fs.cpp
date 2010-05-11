@@ -10,6 +10,7 @@ namespace wibble {
 namespace sys {
 namespace fs {
 
+#ifdef POSIX
 std::auto_ptr<struct stat> stat(const std::string& pathname)
 {
 	std::auto_ptr<struct stat> res(new struct stat);
@@ -76,7 +77,7 @@ void mkFilePath(const std::string& file)
 	if (pos != std::string::npos)
 		mkpath(file.substr(0, pos));
 }
-
+#endif
 std::string readFile( const std::string &file )
 {
     std::ifstream in( file.c_str(), std::ios::binary );
@@ -102,6 +103,7 @@ void writeFile( const std::string &file, const std::string &data )
     out << data;
 }
 
+#ifdef POSIX
 bool deleteIfExists(const std::string& file)
 {
 	if (unlink(file.c_str()) != 0)
@@ -137,6 +139,14 @@ bool Directory::valid()
 		return false;
 	return true;
 }
+#endif
+
+#ifdef _WIN32
+bool access(const std::string &s, int m)
+{
+	return 1; /* FIXME */
+}
+#endif
 
 }
 }
