@@ -17,9 +17,9 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
  */
-
 #include <wibble/sys/process.h>
 
+#ifdef POSIX
 #include <sys/types.h>		// fork, waitpid, kill, open, getpw*, getgr*, initgroups
 #include <sys/stat.h>		// open
 #include <sys/resource.h>	// getrlimit, setrlimit
@@ -85,11 +85,20 @@ void chdir(const string& dir)
 
 std::string getcwd()
 {
+#if defined(__GLIBC__)
+	char* cwd = ::get_current_dir_name();
+	if (cwd == NULL)
+		throw wibble::exception::System("getting the current working directory");
+	const std::string str(cwd);
+	::free(cwd);
+	return str;
+#else
 	size_t size = pathconf(".", _PC_PATH_MAX);
 	char buf[size];
 	if (::getcwd(buf, size) == NULL)
 		throw wibble::exception::System("getting the current working directory");
 	return buf;
+#endif
 }
 
 void chroot(const string& dir)
@@ -308,5 +317,5 @@ void setOpenFilesLimit(int value) { setLimit(RLIMIT_NOFILE, value); }
 }
 }
 }
-	
+#endif
 // vim:set ts=4 sw=4:

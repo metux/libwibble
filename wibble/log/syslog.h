@@ -1,3 +1,6 @@
+#include <wibble/sys/macros.h>
+
+#ifdef POSIX
 #ifndef WIBBLE_LOG_SYSLOG_H
 #define WIBBLE_LOG_SYSLOG_H
 
@@ -25,4 +28,5 @@ public:
 }
 
 // vim:set ts=4 sw=4:
+#endif
 #endif

@@ -21,6 +21,7 @@
 #include <wibble/exception.h>
 #include <wibble/sys/mmap.h>
 
+#ifdef POSIX
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -135,5 +136,5 @@ void MMap::unmap()
 
 }
 }
-
+#endif
 // vim:set ts=4 sw=4:
