@@ -10,6 +10,11 @@ Streambuf::Streambuf(Sender* s) : level(defaultLevel), sender(s) {}
 
 Streambuf::~Streambuf()
 {
+    send_partial_line();
+}
+
+void Streambuf::send_partial_line()
+{
 	if (!line.empty())
 		send();
 }
@@ -45,8 +50,19 @@ std::ostream& operator<<(std::ostream& s, Level lev)
 	{
 		ls->setLevel(lev);
 		return s;
-	} else
-		return s << lev;
+	} else {
+		switch (lev)
+		{
+			case DEBUG:   s << "DEBUG: "; break;
+			case INFO:    s << "INFO: "; break;
+			case UNUSUAL: s << "UNUSUAL: "; break;
+			case WARN:    s << "WARN: "; break;
+			case ERR:     s << "ERR: "; break;
+			case CRIT:    s << "CRITICAL: "; break;
+			default:      s << "UNKNOWN: "; break;
+		}
+		return s;
+	}
 }
 
 }

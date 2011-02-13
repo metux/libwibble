@@ -1,3 +1,11 @@
+libwibble (0.1.27-1) unstable; urgency=low
+
+  * New upstream version
+     - Various fixes and several functions added, especially a TCP
+       server, MIME parsing code and an HTTP server implementation
+
+ -- Enrico Zini <enrico@debian.org>  Sun, 13 Feb 2011 18:27:27 +0000
+
 libwibble (0.1.26-1) unstable; urgency=low
 
   * Make process::getcwd() work on freebsd. Thanks to Pino Toscano.

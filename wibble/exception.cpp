@@ -29,7 +29,7 @@
 #include <sstream>
 #include <iostream>
 
-#ifdef POSIX
+#if defined(POSIX) && ! defined(__xlC__)
 #include <execinfo.h>
 #endif
 
@@ -40,7 +40,7 @@ namespace exception {
 
 std::vector< std::string > *AddContext::s_context = 0;
 
-#ifdef POSIX
+#if defined(POSIX) && ! defined(__xlC__)
 void DefaultUnexpected()
 {
 	try {
@@ -64,6 +64,12 @@ void DefaultUnexpected()
 		cerr << "Exception was an unknown object" << endl;
 		throw;
 	}
+}
+#else
+void DefaultUnexpected()
+{
+	cerr << "Caught unexpected exception.";
+	throw;
 }
 #endif
 
@@ -90,7 +96,7 @@ string System::desc() const throw ()
 {
 	const int buf_size = 500;
 	char buf[buf_size];
-#if (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600) && ! _GNU_SOURCE
+#if (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || __APPLE__) && ! _GNU_SOURCE
 	if (strerror_r(m_errno, buf, buf_size))
 	{
 		buf[buf_size - 1] = 0;

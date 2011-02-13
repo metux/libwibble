@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(libwibble, [0.1.26], [libapt-front-devel@lists.alioth.debian.org])
+AC_INIT(libwibble, [0.1.27], [libapt-front-devel@lists.alioth.debian.org])
 AC_CONFIG_SRCDIR([configure.ac])
 dnl AC_CONFIG_AUX_DIR(admin)
 AM_INIT_AUTOMAKE([foreign subdir-objects nostdinc])
@@ -37,7 +37,9 @@ AM_ENABLE_STATIC
 AM_DISABLE_SHARED
 AM_PROG_LIBTOOL
 
-CXXFLAGS="-Wall -W $CXXFLAGS"
+if test x"$GXX" = x"yes"; then
+	CXXFLAGS="-Wall -W $CXXFLAGS"
+fi
 
 AM_CONDITIONAL([WIBBLE_STANDALONE], [true])
 

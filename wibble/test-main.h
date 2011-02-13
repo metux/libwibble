@@ -2,6 +2,7 @@
 #include <wibble/sys/macros.h>
 
 #ifdef POSIX
+
 #include <unistd.h>
 #include <sys/wait.h>
 #include <cstring>
@@ -231,4 +232,13 @@ struct Main : RunFeedback {
 int main( int argc, char **argv ) {
     return Main().main( argc, argv );
 }
+
+#else
+#include <iostream>
+
+int main( int argc, char **argv ) {
+    std::cerr << "Sorry, test runner not implemented on this non-POSIX platform." << std::endl;
+    return 0;
+}
+
 #endif
