@@ -267,19 +267,23 @@ void ChildProcess::waitForSuccess() {
         if ( WEXITSTATUS( r ) )
             throw exception::Generic(
                 str::fmtf( "Subprocess terminated with error %d.",
-                          WEXITSTATUS( r ) ) );
+                           WEXITSTATUS( r ) ) );
         else
             return;
     }
     if ( WIFSIGNALED( r ) )
         throw exception::Generic(
             str::fmtf( "Subprocess terminated by signal %d.",
-                      WTERMSIG( r ) ) );
+                       WTERMSIG( r ) ) );
     throw exception::Generic( "Error waiting for subprocess." );
 }
 
 void ChildProcess::kill(int signal)
 {
+    if (_pid == -1)
+        throw wibble::exception::Consistency(
+                "killing child process",
+                "child process has not been started");
 	if (::kill(_pid, signal) == -1)
 	{
 		stringstream str;

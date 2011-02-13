@@ -43,14 +43,13 @@ namespace wibble {
 namespace sys {
 
 /**
- * pthread mutex wrapper
+ * pthread mutex wrapper; WARNING: the class allows copying and assignment,
+ * but this is not always safe. You should never copy a locked mutex. It is
+ * however safe to copy when there is no chance of any of the running threads
+ * using the mutex.
  */
 class Mutex
 {
-private:
-	// Disallow copy
-	Mutex& operator=(const Mutex&);
-
 protected:
 #ifdef POSIX
 	pthread_mutex_t mutex;
@@ -69,7 +68,7 @@ public:
             pthread_mutexattr_t attr;
             pthread_mutexattr_init( &attr );
             if ( recursive ) {
-#ifdef __APPLE__
+#if (__APPLE__ || __xlC__)
                 pthread_mutexattr_settype( &attr, PTHREAD_MUTEX_RECURSIVE );
 #else
                 pthread_mutexattr_settype( &attr, PTHREAD_MUTEX_RECURSIVE_NP );
@@ -237,10 +236,10 @@ public:
             if ( yield )
 #ifdef POSIX
                 sched_yield();
-#endif
-
-#ifdef _WIN32
+#elif _WIN32
                 Sleep(0);
+#else
+		;
 #endif
         }
 
@@ -253,13 +252,12 @@ typedef MutexLockT< Mutex > MutexLock;
  * pthread condition wrapper.
  *
  * It works in association with a MutexLock.
+ *
+ * WARNING: the class allows copying and assignment; see Mutex: similar caveats
+ * apply. Do not copy or assign a Condition that may be in use.
  */
 class Condition
 {
-private:
-	// Disallow copy
-	Condition& operator=(const Condition&);
-
 protected:
 #ifdef POSIX
   pthread_cond_t cond;
@@ -459,7 +457,7 @@ public:
       if(WaitForSingleObject(l.mutex, 0) == WAIT_OBJECT_0) {
         l.singlylocking = true;
         while(ReleaseMutex(l.mutex)) ;
-        if(res = (int)GetLastError() != 288) //288 -> MUTEX_NOT_OWNED
+        if ((res = ((int)GetLastError() != 288))) //288 -> MUTEX_NOT_OWNED
           break;
       }
       if(WaitForSingleObject(l.mutex, INFINITE) != WAIT_OBJECT_0) {

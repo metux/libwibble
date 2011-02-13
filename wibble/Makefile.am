@@ -13,6 +13,7 @@ wibbletestdir = $(includedir)/wibble/tests
 wibbletextdir = $(includedir)/wibble/text
 wibblegrcaldir = $(includedir)/wibble/grcal
 wibblestreamdir = $(includedir)/wibble/stream
+wibblenetdir = $(includedir)/wibble/net
 
 wibble_HEADERS = \
     amorph.h \
@@ -37,6 +38,7 @@ wibblesys_HEADERS = \
     sys/thread.h \
     sys/process.h \
     sys/netbuffer.h \
+    sys/macros.h \
     sys/mutex.h \
     sys/fs.test.h \
     sys/buffer.h \
@@ -45,14 +47,16 @@ wibblesys_HEADERS = \
     sys/exec.h \
     sys/fs.h \
     sys/signal.h \
-    sys/lockfile.h
+    sys/lockfile.h \
+    sys/filelock.h
 
 wibblelog_HEADERS = \
     log/stream.h \
     log/null.h \
     log/syslog.h \
     log/ostream.h \
-    log/file.h
+    log/file.h \
+    log/filters.h
 
 wibblecommandline_HEADERS = \
     commandline/core.h \
@@ -77,6 +81,11 @@ wibblegrcal_HEADERS = \
 wibblestream_HEADERS = \
     stream/posix.h
 
+wibblenet_HEADERS = \
+    net/mime.h \
+    net/server.h \
+    net/http.h
+
 lib_LTLIBRARIES = libwibble.la
 
 else
@@ -91,6 +100,7 @@ libwibble_la_SOURCES = \
     tests.cpp \
     sys/fs.cpp \
     sys/lockfile.cpp \
+    sys/filelock.cpp \
     sys/buffer.cpp \
     sys/mmap.cpp \
     sys/process.cpp \
@@ -103,18 +113,22 @@ libwibble_la_SOURCES = \
     log/stream.cpp \
     log/ostream.cpp \
     log/syslog.cpp \
+    log/filters.cpp \
     commandline/core.cpp \
     commandline/options.cpp \
     commandline/doc.cpp \
     commandline/parser.cpp \
     commandline/engine.cpp \
     text/wordwrap.cpp \
-    grcal/grcal.cpp
+    grcal/grcal.cpp \
+    net/mime.cpp \
+    net/server.cpp \
+    net/http.cpp
 
 #libwibble_la_LIBADD = 
 #libwibble_la_LDFLAGS = -no-undefined
 
-EXTRA_DIST = README.repo libwibble.m4 libwibble.pc.in \
+EXTRA_DIST = README libwibble.m4 libwibble.pc.in \
     amorph.test.h \
     consumer.test.h \
     empty.test.h \
@@ -144,6 +158,9 @@ EXTRA_DIST = README.repo libwibble.m4 libwibble.pc.in \
     sys/lockfile.test.h \
     sys/signal.test.h \
     grcal/grcal.test.h \
-    stream/posix.test.h
+    stream/posix.test.h \
+    net/mime.test.h \
+    net/server.test.h \
+    net/http.test.h
 
 # vim:set ts=4 sw=4:

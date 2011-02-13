@@ -21,7 +21,10 @@ namespace fs {
 std::auto_ptr<struct stat> stat(const std::string& pathname);
 
 /// access() a filename
-bool access(const std::string &s, int m);
+bool access(const std::string& s, int m);
+
+/// Same as access(s, F_OK);
+bool exists(const std::string& s);
 
 /**
  * Get the absolute path of a file
@@ -41,8 +44,10 @@ void mkpath(const std::string& dir);
 /// The file itself will not get created.
 void mkFilePath(const std::string& file);
 
-/// Read file into memory. Throws exceptions on failure.
+/// Read whole file into memory. Throws exceptions on failure.
 std::string readFile(const std::string &file);
+
+/// Write \a data to \a file, replacing existing contents if it already exists
 void writeFile(const std::string &file, const std::string &data);
 
 /**
@@ -52,12 +57,27 @@ void writeFile(const std::string &file, const std::string &data);
  */
 bool deleteIfExists(const std::string& file);
 
+/// Move \a src to \a dst, without raising exception if \a src does not exist
+void renameIfExists(const std::string& src, const std::string& dst);
+
+/// Delete the file
+void unlink(const std::string& fname);
+
+/// Remove the directory using rmdir(2)
+void rmdir(const std::string& dirname);
+
+/// Delete the directory \a dir and all its content
+void rmtree(const std::string& dir);
+
 /**
  * Returns true if the given pathname is a directory, else false.
  *
  * It also returns false if the pathname does not exist.
  */
-bool isDirectory(const std::string& pathname);
+bool isdir(const std::string& pathname);
+
+/// same as isdir, but with a legacy clumsy name
+bool isDirectory(const std::string& pathname) __attribute__ ((deprecated));
 
 /// Nicely wrap access to directories
 class Directory
@@ -97,6 +117,7 @@ public:
 			const_iterator* wi = const_cast<const_iterator*>(&i);
 			wi->dir = 0;
 			wi->d = 0;
+                        return *this;
 		}
 
 		const_iterator& operator++()
@@ -136,6 +157,9 @@ public:
 
 	/// End iterator
 	const_iterator end() const;
+
+    /// @return true if \a i points to a directory, else false
+    bool isdir(const const_iterator& i) const;
 };
 
 }

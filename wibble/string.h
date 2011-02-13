@@ -42,6 +42,14 @@ namespace str {
 
 using namespace wibble::operators;
 
+#ifdef _WIN32
+static int vasprintf (char **, const char *, va_list);
+#endif
+
+std::string fmt( const char* f, ... ) __attribute__ ((deprecated));
+std::string fmtf( const char* f, ... );
+template< typename T > inline std::string fmt(const T& val);
+
 // Formatting lists -- actually, we need to move list handling into wibble,
 // really.
 template< typename X >
@@ -60,13 +68,6 @@ inline typename TPair< std::ostream, typename X::Type >::First &operator<<(
     }
     return o << " ]";
 }
-
-#ifdef _WIN32
-static int vasprintf (char **, const char *, va_list);
-#endif
-
-std::string fmt( const char* f, ... ) __attribute__ ((deprecated));
-std::string fmtf( const char* f, ... );
 
 /// Format any value into a string using a std::stringstream
 template< typename T >
@@ -159,7 +160,19 @@ inline bool endsWith(const std::string& str, const std::string& part)
 	return str.substr(str.size() - part.size()) == part;
 }
 
-#if ! __GNUC__ || __GNUC__ >= 4
+inline std::string replace(const std::string& str, char from, char to)
+{
+	std::string res;
+	res.reserve(str.size());
+	for (std::string::const_iterator i = str.begin(); i != str.end(); ++i)
+		if (*i == from)
+			res.append(1, to);
+		else
+			res.append(1, *i);
+	return res;
+}
+
+#if !__xlC__ && (! __GNUC__ || __GNUC__ >= 4)
 /**
  * Return the substring of 'str' without all leading and trailing characters
  * for which 'classifier' returns true.
@@ -273,9 +286,9 @@ std::string decodeBase64(const std::string& str);
  *
  * Example code:
  * \code
- *   str::Split splitter("/");
+ *   str::Split splitter("/", myString);
  *   vector<string> split;
- *   std::copy(splitter.begin(myString), splitter.end(), back_inserter(split));
+ *   std::copy(splitter.begin(), splitter.end(), back_inserter(split));
  * \endcode
  */
 class Split
