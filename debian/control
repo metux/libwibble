@@ -1,10 +1,10 @@
 Source: libwibble
 Section: libdevel
 Priority: optional
-Maintainer: libapt-front developers <libapt-front-devel@lists.alioth.debian.org>
-Uploaders: Petr Rockai <mornfall@debian.org>, Enrico Zini <enrico@debian.org>
+Maintainer: Enrico Zini <enrico@debian.org>
+Uploaders: Petr Rockai <mornfall@debian.org>
 Build-Depends: cdbs (>= 0.4.51), debhelper (>= 5.0), dh-buildinfo, doxygen, cmake
-Standards-Version: 3.8.4.0
+Standards-Version: 3.9.2.0
 Vcs-Darcs: http://patch-tag.com/r/wibble-standalone/
 Homepage: http://web.mornfall.net/libwibble.html
 

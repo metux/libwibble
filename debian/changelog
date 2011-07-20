@@ -1,3 +1,13 @@
+libwibble (0.1.28-1) unstable; urgency=low
+
+  * New upstream version
+     - Added a missing include. Thanks Ilya Barygin for the patch.
+       Closes: #625046
+  * Changed maintainer to myself, list has been closed
+  * Updated standards-version, no changes required
+
+ -- Enrico Zini <enrico@debian.org>  Wed, 20 Jul 2011 12:59:57 +0200
+
 libwibble (0.1.27-1) unstable; urgency=low
 
   * New upstream version
