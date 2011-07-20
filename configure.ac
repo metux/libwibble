@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(libwibble, [0.1.27], [libapt-front-devel@lists.alioth.debian.org])
+AC_INIT(libwibble, [0.1.28], [libapt-front-devel@lists.alioth.debian.org])
 AC_CONFIG_SRCDIR([configure.ac])
 dnl AC_CONFIG_AUX_DIR(admin)
 AM_INIT_AUTOMAKE([foreign subdir-objects nostdinc])
