@@ -7,8 +7,10 @@
 #include <wibble/sys/exec.h>
 #include <cstdlib>
 #include <iostream>
+#include <unistd.h>
 
 #include <wibble/test.h>
+
 
 using namespace std;
 using namespace wibble::sys;
