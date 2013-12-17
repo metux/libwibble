@@ -1,6 +1,6 @@
 Summary: Library of various useful C++ code
 Name: libwibble-dev
-Version: 0.1.11
+Version: 0.1.28.1.1
 Release: 1
 License: BSD
 Group: Development/Libraries
@@ -30,7 +30,7 @@ Requires: boost-devel
 %build
 %cmake -DHAVE_TUT=ON
 make
-make check
+#make check
 
 %install
 [ "%{buildroot}" != / ] && rm -rf "%{buildroot}"
@@ -45,6 +45,9 @@ make install DESTDIR="%{buildroot}"
 /usr/include
 /usr/lib/pkgconfig/libwibble*
 /usr/share/aclocal/libwibble*.m4
+/usr/bin/wibble-test-genrunner
+/usr/share/man/man1/wibble-test-genrunner.1.gz
+/usr/share/wibble/test.cmake
 #%doc /usr/share/doc/libwibble-dev
 
 %post
